@@ -1,0 +1,91 @@
+<script setup>
+import { onMounted, computed, ref } from 'vue';
+import Table from '@/components/Table.vue';
+import { useSurahStore } from '@/stores/surah';
+import Button from '../../../components/Button.vue';
+
+const store = useSurahStore();
+
+const fields = ref([
+    "Surah",
+    "Nama Surah",
+    "Jumlah Ayat",
+    "Arti Surah"
+]);
+
+const getItems = computed(() => store.getItems)
+const searchSurah = ref("");
+const seq = ref("");
+const mahasiswaId = ref("");
+
+const getSurah = () => {
+    store.fetchSurah({ surah: searchSurah.value, seq: seq.value, mahasiswaId: mahasiswaId.value })
+}
+
+
+onMounted(() => {
+    getSurah();
+});
+</script>
+
+<template>
+    <div>
+        <div class="w-full min-h-[80vh] py-8 px-8">
+            <div class="flex mb-4 items-center">
+                <div class="mt-auto ml-auto">
+                    <Button>
+                        <span>
+                            <svg xmlns="http://www.w3.org/2000/svg" height="16" fill="#FFFFFF" viewBox="0 -960 960 960"
+                                width="16">
+                                <path
+                                    d="M730-420v-120H610v-40h120v-120h40v120h120v40H770v120h-40Zm-370-84.615q-49.5 0-84.75-35.25T240-624.615q0-49.501 35.25-84.751 35.25-35.25 84.75-35.25t84.75 35.25Q480-674.116 480-624.615q0 49.5-35.25 84.75T360-504.615ZM80-215.384v-65.847Q80-306 94.423-327.577q14.423-21.577 38.808-33.5 56.615-27.154 113.307-40.731Q303.231-415.385 360-415.385q56.769 0 113.462 13.577 56.692 13.577 113.307 40.731 24.385 11.923 38.808 33.5Q640-306 640-281.231v65.847H80Zm40-40.001h480v-25.846q0-13.307-8.577-25-8.577-11.692-23.731-19.769-49.384-23.923-101.836-36.654Q413.405-375.385 360-375.385q-53.405 0-105.856 12.731Q201.692-349.923 152.308-326q-15.154 8.077-23.731 19.769-8.577 11.693-8.577 25v25.846Zm240-289.23q33 0 56.5-23.5t23.5-56.5q0-33-23.5-56.5t-56.5-23.5q-33 0-56.5 23.5t-23.5 56.5q0 33 23.5 56.5t56.5 23.5Zm0-80Zm0 369.23Z" />
+                            </svg>
+                        </span>
+                        <span>
+                            Create
+                        </span>
+                    </Button>
+                </div>
+            </div>
+            <div>
+                <div class="relative overflow-x-auto max-h-[70vh]">
+                    <Table :fields="fields">
+                        <tbody class="pt-4 text-center z-0 text-xs">
+                            <tr class="hover:bg-gray-50 border-b" v-for="(item, index) in getItems">
+                                <td class="py-4 leading-6">
+                                    {{ item.surah }}
+                                </td>
+                                <td class="py-4 leading-6">
+                                    {{ item.nama_surah }}
+                                </td>
+                                <td class="py-4 leading-6">
+                                    {{ item.jumlah_ayat }}
+                                </td>
+                                <td class="py-4 leading-6">
+                                    {{ item.arti_surah }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </Table>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<style scoped>
+.style-chooser {
+    min-width: 13.9vw;
+    --vs-font-size: 1em;
+    --vs-border-color: #cbcbcb;
+    --vs-controls-color: #01a1b9;
+    --vs-dropdown-bg: #ffff;
+    --vs-dropdown-bg: #ffff;
+    --vs-dropdown-color: #101010;
+    --vs-dropdown-option-color: rgb(0, 0, 0);
+    --vs-selected-bg: #664cc3;
+    --vs-selected-color: #000000;
+    --vs-search-input-color: #595858;
+    --vs-line-height: 2vw;
+}
+</style>

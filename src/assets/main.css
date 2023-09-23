@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+@import "vue-select/dist/vue-select.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.bg-base {
+   box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 1px -2px, rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;
+   transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.9, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+:root {
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+}
+
+.style-chooser {
+    min-width: 13.9vw;
+    --vs-font-size: 1em;
+    --vs-border-color: #cbcbcb;
+    --vs-controls-color: #01a1b9;
+    --vs-dropdown-bg: #ffff;
+    --vs-dropdown-bg: #ffff;
+    --vs-dropdown-color: #101010;
+    --vs-dropdown-option-color: rgb(0, 0, 0);
+    --vs-selected-bg: #664cc3;
+    --vs-selected-color: #000000;
+    --vs-search-input-color: #595858;
+    --vs-line-height: 2vw;
+}

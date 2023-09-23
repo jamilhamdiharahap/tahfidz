@@ -1,0 +1,124 @@
+<script setup>
+import { onMounted, computed, ref } from 'vue';
+import Table from '@/components/Table.vue';
+import { useUserStore } from '@/stores/user';
+import Button from '../../../components/Button.vue';
+
+const store = useUserStore();
+
+const fields = ref([
+    "No",
+    "username",
+    "Email",
+    "Nama role",
+    "Status",
+    "Dibuat",
+    "Action",
+]);
+
+const getItems = computed(() => store.getItems)
+const searchUser = ref("");
+
+const getUser = () => {
+    store.fetchUser({ userId: searchUser.value })
+}
+
+
+onMounted(() => {
+    getUser();
+});
+</script>
+
+<template>
+    <div>
+        <div class="w-full min-h-[80vh] py-8 px-8">
+            <div class="flex mb-4 items-center">
+                <div class="mt-auto ml-auto">
+                    <Button>
+                        <span>
+                            <svg xmlns="http://www.w3.org/2000/svg" height="16" fill="#FFFFFF" viewBox="0 -960 960 960"
+                                width="16">
+                                <path
+                                    d="M730-420v-120H610v-40h120v-120h40v120h120v40H770v120h-40Zm-370-84.615q-49.5 0-84.75-35.25T240-624.615q0-49.501 35.25-84.751 35.25-35.25 84.75-35.25t84.75 35.25Q480-674.116 480-624.615q0 49.5-35.25 84.75T360-504.615ZM80-215.384v-65.847Q80-306 94.423-327.577q14.423-21.577 38.808-33.5 56.615-27.154 113.307-40.731Q303.231-415.385 360-415.385q56.769 0 113.462 13.577 56.692 13.577 113.307 40.731 24.385 11.923 38.808 33.5Q640-306 640-281.231v65.847H80Zm40-40.001h480v-25.846q0-13.307-8.577-25-8.577-11.692-23.731-19.769-49.384-23.923-101.836-36.654Q413.405-375.385 360-375.385q-53.405 0-105.856 12.731Q201.692-349.923 152.308-326q-15.154 8.077-23.731 19.769-8.577 11.693-8.577 25v25.846Zm240-289.23q33 0 56.5-23.5t23.5-56.5q0-33-23.5-56.5t-56.5-23.5q-33 0-56.5 23.5t-23.5 56.5q0 33 23.5 56.5t56.5 23.5Zm0-80Zm0 369.23Z" />
+                            </svg>
+                        </span>
+                        <span>
+                            Create
+                        </span>
+                    </Button>
+                </div>
+            </div>
+            <div>
+                <div class="relative overflow-x-auto h-auto max-h-full hover:max-h-screen">
+                    <Table :fields="fields">
+                        <tbody class="pt-4 text-center z-0 text-xs">
+                            <tr class="hover:bg-gray-50 border-b" v-for="(item, index) in getItems">
+                                <td class="py-4 leading-6">
+                                    {{ index + 1 }}
+                                </td>
+                                <td class="py-4 leading-6">
+                                    {{ item.user_name }}
+                                </td>
+                                <td class="py-4 leading-6">
+                                    {{ item.email }}
+                                </td>
+                                <td class="py-4 leading-6">
+                                    {{ item.role_name }}
+                                </td>
+                                <td class="py-4 leading-6" v-if="item.is_active == false">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+                                        <path
+                                            d="M791-55 686-160H160v-112q0-34 17.5-62.5T224-378q45-23 91.5-37t94.5-21L55-791l57-57 736 736-57 57ZM240-240h366L486-360h-6q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32Zm496-138q29 14 46 42.5t18 61.5L666-408q18 7 35.5 14t34.5 16ZM568-506l-59-59q23-9 37-29.5t14-45.5q0-33-23.5-56.5T480-720q-25 0-45.5 14T405-669l-59-59q23-34 58-53t76-19q66 0 113 47t47 113q0 41-19 76t-53 58Zm38 266H240h366ZM457-617Z" />
+                                    </svg>
+                                </td>
+                                <td class="py-4 leading-6 relative" v-else>
+                                    <svg class="absolute top-4 left-10" fill="#A2C579" xmlns="http://www.w3.org/2000/svg"
+                                        height="24" viewBox="0 -960 960 960" width="24">
+                                        <path
+                                            d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47Zm240 320H240q-33 0-56.5-23.5T160-240v-32q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v32q0 33-23.5 56.5T720-160Zm-480-80h480v-32q0-11-5.5-20T700-306q-54-27-109-40.5T480-360q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32Zm240-320q33 0 56.5-23.5T560-640q0-33-23.5-56.5T480-720q-33 0-56.5 23.5T400-640q0 33 23.5 56.5T480-560Zm0-80Zm0 400Z" />
+                                    </svg>
+                                </td>
+                                <td class="py-4 leading-6">
+                                    {{ item.created_date }}
+                                </td>
+                                <td class="py-4 leading-6">
+                                    <button class="px-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960"
+                                            width="24">
+                                            <path
+                                                d="M200-200h56l345-345-56-56-345 345v56Zm572-403L602-771l113-113 169 169-112 112ZM120-120v-170l424-424 170 170-424 424H120Zm453-453-28-28 56 56-28-28Z" />
+                                        </svg>
+                                    </button>
+                                    <button class="px-2">
+                                        <svg fill="#C63D2F" xmlns="http://www.w3.org/2000/svg" height="24"
+                                            viewBox="0 -960 960 960" width="24">
+                                            <path
+                                                d="M200-120v-600h-40v-80h200v-40h240v40h200v80h-40v600H200Zm80-80h400v-520H280v520Zm80-80h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+                                        </svg>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </Table>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<style scoped>
+.style-chooser {
+    min-width: 13.9vw;
+    --vs-font-size: 1em;
+    --vs-border-color: #cbcbcb;
+    --vs-controls-color: #01a1b9;
+    --vs-dropdown-bg: #ffff;
+    --vs-dropdown-bg: #ffff;
+    --vs-dropdown-color: #101010;
+    --vs-dropdown-option-color: rgb(0, 0, 0);
+    --vs-selected-bg: #664cc3;
+    --vs-selected-color: #000000;
+    --vs-search-input-color: #595858;
+    --vs-line-height: 2vw;
+}
+</style>
