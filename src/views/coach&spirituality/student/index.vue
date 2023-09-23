@@ -157,7 +157,7 @@ onMounted(() => {
                                 Nama Mahasiswa
                             </label>
                             <input v-model="form.nama_mahasiswa"
-                                class="shadow w-full focus:border-spacing-1.5 appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md px-2"
                                 type="text">
                         </div>
                     </div>
@@ -167,7 +167,7 @@ onMounted(() => {
                                 Email
                             </label>
                             <input v-model="form.email"
-                                class="shadow w-full focus:border-spacing-1.5 appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md px-2"
                                 type="text">
                         </div>
                     </div>
@@ -178,7 +178,7 @@ onMounted(() => {
                             </label>
 
                             <input v-model="form.nomor_hp"
-                                class="shadow w-full appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md px-2"
                                 type="text">
                         </div>
                     </div>
@@ -188,22 +188,22 @@ onMounted(() => {
                                 Angkatan
                             </label>
                             <v-select :options="getGenerationFilter" label="label" v-model="form.angkatan"
-                                class="style-chooser text-xs leading-4"></v-select>
+                                class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md"></v-select>
                         </div>
                     </div>
                 </div>
-                <button class="bg-base bg-[#45CFDD] flex items-center rounded-md px-2 gap-1 ml-auto mb-auto py-1">
+                <Button class="ml-auto mb-auto">
                     <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"
+                        <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16"
                             fill="#FFFFFF">
                             <path d="M460-460H240v-40h220v-220h40v220h220v40H500v220h-40v-220Z" />
                         </svg>
                     </span>
                     <span
-                        :class="getIsLoading ? 'h-6 w-6 block rounded-full border-4 border-t-[#45CFDD] animate-spin' : 'text-white text-sm leading-6'">
+                        :class="getIsLoading ? 'h-6 w-6 block rounded-full border-4 border-t-[#4EBF5F] animate-spin' : ''">
                         {{ getIsLoading ? '' : 'New' }}
                     </span>
-                </button>
+                </Button>
             </form>
         </BaseModal>
     </div>

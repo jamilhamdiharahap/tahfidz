@@ -23,7 +23,7 @@ const logout = () => {
 </script>
 
 <template>
-    <div class="sticky top-0 h-14 z-10 bg-[#F2F2F2] opacity-60">
+    <div class="sticky top-0 h-14 z-50 bg-[#F2F2F2]">
         <div class="flex mx-auto justify-between items-center h-14 w-full md:px-8 px-4">
             <!-- <slot /> -->
             <div class="flex items-center space-x-4 ml-auto">
@@ -43,7 +43,7 @@ const logout = () => {
                 </button>
             </div>
         </div>
-        <div v-show="dropDownOpen" class="fixed inset-0 z-10 w-full h-full" @click="toggleDropDown" />
+        <div v-show="dropDownOpen" class="fixed inset-0 w-full h-full" @click="toggleDropDown" />
         <transition enter-active-class="transition duration-150 ease-out transform" enter-from-class="scale-95 opacity-0"
             enter-to-class="scale-100 opacity-100" leave-active-class="transition duration-150 ease-in transform"
             leave-from-class="scale-100 opacity-100" leave-to-class="scale-95 opacity-0">

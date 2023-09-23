@@ -21,7 +21,6 @@ export const useAuthStore = defineStore('auth', {
       this.isLoading = true;
       const data = await loginAuthService(payload);
       if (data?.data?.status == 200) {
-        console.log("Ok")
         localStorage.setItem("auth", JSON.stringify([data.data.data.token, data.data.data.role_id, data.data.data.full_name, data.data.data.email, {auth: true}]))
         setTimeout(() => {
           this.isLoading = false

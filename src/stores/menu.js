@@ -84,7 +84,6 @@ export const useMenuStore = defineStore('menu', {
     actions: {
         fetchMenu(auth) {
             let roleId = JSON.parse(auth);
-            console.log(roleId[1]);
             if (roleId[1] == "1") {
                 this.updateMenu(this.coach);
             } else if (roleId[1] == "2") {

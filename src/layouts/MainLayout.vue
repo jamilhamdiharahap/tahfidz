@@ -6,6 +6,7 @@ import AsideMenu from '../components/AsideMenu.vue';
 import BreadCrumb from "../components/BreadCrumb.vue";
 
 const route = useRoute();
+const user = computed(() => JSON.parse(localStorage.getItem('auth')));
 const breadcrumbs = computed(() => {
     return route.meta.title;
 })
@@ -22,7 +23,7 @@ const breadcrumbs = computed(() => {
                 <main class="w-full px-3 sm:px-10">
                     <div v-if="breadcrumbs != 'Schedule'" class="md:flex md:text-xs text-[2px] justify-between items-center h-10 bg-white sticky top-16 mb-6 px-4 rounded-md">
                         <BreadCrumb :text="breadcrumbs" />
-                        <span class="text-xs"><i class="text-gray-400 leading-5">Pembina</i> / {{ breadcrumbs }}</span>
+                        <span class="text-xs"><i class="text-gray-400 leading-5">{{user[2]}}</i> / {{ breadcrumbs }}</span>
                     </div>
                     <slot />
                 </main>

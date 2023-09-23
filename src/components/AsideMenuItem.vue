@@ -10,7 +10,6 @@ const router = useRoute();
 const { menuItems } = toRefs(props);
 
 function isActive(route) {
-    console.log(route)
     return router.path === route;
 }
 </script>

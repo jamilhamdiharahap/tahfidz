@@ -9,3 +9,12 @@ export async function getUser({ userId }) {
         return err;
     }
 }
+
+export async function postUser(payload) {
+    try {
+        const data = await instance.post(`/user/create`, payload);
+        return data;
+    } catch (err) {
+        return err;
+    }
+}

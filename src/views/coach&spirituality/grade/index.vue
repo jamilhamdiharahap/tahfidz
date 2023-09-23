@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, computed, ref } from 'vue';
+import { onMounted, computed, ref, reactive } from 'vue';
 import Table from '@/components/Table.vue';
 import { useGradeStore } from '@/stores/grade.js';
 import Button from '../../../components/Button.vue';
@@ -13,18 +13,29 @@ const fields = ref([
     "Action",
 ]);
 
-const statusItems = ref([
-    { label: "Active", code: true },
-    { label: "Non Active", code: false },
-])
+const formUpdate = reactive(
+    {
+        nilai_id: "",
+        nama_penilaian: "",
+        is_active: ""
+    }
+);
 
+const statusItems = ref([{ label: "Active", code: true }, { label: "Non Active", code: false }]);
 const status = ref("");
 
-const getItems = computed(() => store.getItems)
+const getItems = computed(() => store.getItems);
 
-const getGrade = () => {
-    store.fetchGrade({ nilaiId: "", status: "" })
-}
+
+const updateStatus = async (params) => {
+    formUpdate.nilai_id = params.nilai_id;
+    formUpdate.nama_penilaian = params.nama_penilaian;
+    formUpdate.is_active = params.is_active == 'true' ? 'false' : 'true';
+
+   await store.fetchUpdateGrade(formUpdate);
+   getGrade();
+} 
+const getGrade = () => store.fetchGrade({ nilaiId: "", status: "" });
 
 
 onMounted(() => {
@@ -74,11 +85,18 @@ onMounted(() => {
                                     Non Active
                                 </td>
                                 <td class="py-4 leading-6">
-                                    <button class="px-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960"
-                                            width="24">
+                                    <button class="px-2" v-if="item.is_active == 'true'" @click="updateStatus(item)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="#4EBF5F" height="24"
+                                            viewBox="0 -960 960 960" width="24">
                                             <path
-                                                d="M200-200h56l345-345-56-56-345 345v56Zm572-403L602-771l113-113 169 169-112 112ZM120-120v-170l424-424 170 170-424 424H120Zm453-453-28-28 56 56-28-28Z" />
+                                                d="M280-260.001q-91.666 0-155.832-64.14-64.167-64.14-64.167-155.768 0-91.629 64.167-155.859Q188.334-699.999 280-699.999h400q91.666 0 155.832 64.14 64.167 64.14 64.167 155.768 0 91.629-64.167 155.859Q771.666-260.001 680-260.001H280ZM280-320h400q66 0 113-47t47-113q0-66-47-113t-113-47H280q-66 0-113 47t-47 113q0 66 47 113t113 47Zm399.955-50.001q45.814 0 77.929-32.07t32.115-77.884q0-45.814-32.07-77.929t-77.884-32.115q-45.814 0-77.929 32.07t-32.115 77.884q0 45.814 32.07 77.929t77.884 32.115ZM480-480Z" />
+                                        </svg>
+                                    </button>
+                                    <button class="px-2" v-else @click="updateStatus(item)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="#C63D2F" height="24"
+                                            viewBox="0 -960 960 960" width="24">
+                                            <path
+                                                d="M280-260.001q-91.666 0-155.832-64.14-64.167-64.14-64.167-155.768 0-91.629 64.167-155.859Q188.334-699.999 280-699.999h400q91.666 0 155.832 64.14 64.167 64.14 64.167 155.768 0 91.629-64.167 155.859Q771.666-260.001 680-260.001H280ZM280-320h400q66 0 113-47t47-113q0-66-47-113t-113-47H280q-66 0-113 47t-47 113q0 66 47 113t113 47Zm-.045-50.001q45.814 0 77.929-32.07t32.115-77.884q0-45.814-32.07-77.929t-77.884-32.115q-45.814 0-77.929 32.07t-32.115 77.884q0 45.814 32.07 77.929t77.884 32.115ZM480-480Z" />
                                         </svg>
                                     </button>
                                 </td>

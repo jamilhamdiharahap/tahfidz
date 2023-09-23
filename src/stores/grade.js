@@ -1,10 +1,12 @@
 import { defineStore } from 'pinia';
-import { getNilaiMaster, getNilai } from '../service/gradeService.js';
+import { getNilaiMaster, getNilai, updateGrade } from '../service/gradeService.js';
 
 export const useGradeStore = defineStore('grade', {
     state: () => ({
         items: [],
-        nilaiItems: []
+        nilaiItems: [],
+        isOpen: false,
+        loading: false,
     }),
 
     actions: {
@@ -18,17 +20,28 @@ export const useGradeStore = defineStore('grade', {
             this.updateItemsMhs(data)
         },
 
+        async fetchUpdateGrade(payload) {
+            const { data } = await updateGrade(payload);
+            console.log(data)
+        },
+
         updateItems(results) {
             this.items = results.data
         },
 
         updateItemsMhs(results){
             this.items = results.data
+        },
+
+        updateModal(status) {
+            this.isOpen = status;
         }
     },
 
     getters: {
         getItems: (state) => state.items,
         getItemMhs: (state) => state.nilaiItems,
+        getIsOpen: (state) => state.isOpen,
+        getLoading: (state) => state.loading,
     },
 })

@@ -18,3 +18,12 @@ export async function getNilai({ surahId, tanggal, mahasiswaId }) {
         return err;
     }
 }
+
+export async function updateGrade(payload) {
+    try {
+        const data = await instance.post(`/nilai/updateMasterNilai`, payload);
+        return data;
+    } catch (err) {
+        return err;
+    }
+}

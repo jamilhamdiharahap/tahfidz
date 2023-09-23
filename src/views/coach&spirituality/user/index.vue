@@ -1,8 +1,10 @@
 <script setup>
 import { onMounted, computed, ref } from 'vue';
 import Table from '@/components/Table.vue';
+import BaseModal from '../../../components/BaseModal.vue';
 import { useUserStore } from '@/stores/user';
 import Button from '../../../components/Button.vue';
+import { reactive } from "vue";
 
 const store = useUserStore();
 
@@ -16,12 +18,26 @@ const fields = ref([
     "Action",
 ]);
 
-const getItems = computed(() => store.getItems)
+const getItems = computed(() => store.getItems);
+const getIsOpen = computed(() => store.getIsOpen);
+const getIsLoading = computed(() => store.getLoading);
+
 const searchUser = ref("");
 
-const getUser = () => {
-    store.fetchUser({ userId: searchUser.value })
-}
+const form = reactive(
+    {
+        user_name: "",
+        user_password: "",
+        user_active: true,
+        role_id: 0,
+        mail: "",
+        full_name: "",
+        phone: ""
+    }
+);
+
+const getUser = () => store.fetchUser({ userId: searchUser.value });
+const createUser = () => store.fetchCreateUser(form);
 
 
 onMounted(() => {
@@ -34,7 +50,7 @@ onMounted(() => {
         <div class="w-full min-h-[80vh] py-8 px-8">
             <div class="flex mb-4 items-center">
                 <div class="mt-auto ml-auto">
-                    <Button>
+                    <Button @click="store.updateModal(true)">
                         <span>
                             <svg xmlns="http://www.w3.org/2000/svg" height="16" fill="#FFFFFF" viewBox="0 -960 960 960"
                                 width="16">
@@ -103,6 +119,74 @@ onMounted(() => {
                 </div>
             </div>
         </div>
+        <BaseModal :open="getIsOpen" @close="store.updateModal(false)" :width="'w-96'">
+            <form @submit.prevent="createUser" class="py-8">
+                <div class="flex flex-col flex-wrap md:gap-4 space-y-2 mb-6">
+                    <div class="relative h-12 w-auto min-w-[200px]">
+                        <div>
+                            <label class="block text-xs font-light mb-2">
+                                Name
+                            </label>
+                            <input v-model="form.full_name"
+                                class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md px-2"
+                                type="text">
+                        </div>
+                    </div>
+                    <div class="relative h-12 w-auto min-w-[200px]">
+                        <div>
+                            <label class="block text-xs font-light mb-2">
+                                No. Hp
+                            </label>
+                            <input v-model="form.phone"
+                                class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md px-2"
+                                type="text">
+                        </div>
+                    </div>
+                    <div class="relative h-12 w-auto min-w-[200px]">
+                        <div>
+                            <label class="block text-xs font-light mb-2">
+                                Username
+                            </label>
+                            <input v-model="form.user_name"
+                                class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md px-2"
+                                type="text">
+                        </div>
+                    </div>
+                    <div class="relative h-12 w-auto min-w-[200px]">
+                        <div>
+                            <label class="block text-xs font-light mb-2">
+                                Password
+                            </label>
+                            <input v-model="form.user_password"
+                                class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md px-2"
+                                type="text">
+                        </div>
+                    </div>
+                    <div class="relative h-12 w-auto min-w-[200px]">
+                        <div>
+                            <label class="block text-xs font-light mb-2">
+                                Email
+                            </label>
+                            <input v-model="form.mail"
+                                class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md px-2"
+                                type="text">
+                        </div>
+                    </div>
+                </div>
+                <Button class="m-auto ml-auto">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16"
+                            fill="#FFFFFF">
+                            <path d="M460-460H240v-40h220v-220h40v220h220v40H500v220h-40v-220Z" />
+                        </svg>
+                    </span>
+                    <span
+                        :class="getIsLoading ? 'h-6 w-6 block rounded-full border-4 border-t-[#4EBF5F] animate-spin' : ''">
+                        {{ getIsLoading ? '' : 'New' }}
+                    </span>
+                </Button>
+            </form>
+        </BaseModal>
     </div>
 </template>
 
