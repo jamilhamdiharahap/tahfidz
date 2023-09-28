@@ -1,9 +1,10 @@
 <script setup>
 import { onMounted, computed, ref, watch, reactive } from 'vue';
-import Table from '../../../components/Table.vue';
-import { useStudentStore } from '../../../stores/student';
-import BaseModal from '../../../components/BaseModal.vue';
-import Button from '../../../components/Button.vue';
+import Table from '@/components/Table.vue';
+import { useStudentStore } from '@/stores/student';
+import BaseModal from '@/components/BaseModal.vue';
+import Button from '@/components/Button.vue';
+import IconNotFound from '@/components/icons/iconNotFound.vue';
 
 const store = useStudentStore();
 
@@ -83,8 +84,8 @@ onMounted(() => {
 
 <template>
     <div>
-        <div class="w-full min-h-[80vh] py-8 px-8">
-            <div class="flex mb-4 items-center gap-4">
+        <div class="shadow-md rounded-md bg-slate-50 w-full min-h-[50vh] px-8">
+            <div class="flex mb-4 items-center gap-4 py-6">
                 <div class="relative min-w-[16vw]">
                     <label for="" class="text-sm leading-3 font-light">Angkatan</label>
                     <v-select :options="getGenerationFilter" value="code" label="label" v-model="angkatan"
@@ -111,8 +112,8 @@ onMounted(() => {
                 </div>
             </div>
             <div>
-                <div class="relative overflow-x-auto h-auto max-h-full hover:max-h-screen">
-                    <Table :fields="fields">
+                <div class="relative overflow-x-auto max-h-[62vh]">
+                    <Table v-if="getItems.length > 0" :fields="fields">
                         <tbody class="pt-4 text-center z-0 text-xs">
                             <tr class="hover:bg-gray-50 border-b" v-for="(item, index) in getItems">
                                 <td class="py-4 leading-6">
@@ -141,6 +142,17 @@ onMounted(() => {
                                                 d="M200-200h56l345-345-56-56-345 345v56Zm572-403L602-771l113-113 169 169-112 112ZM120-120v-170l424-424 170 170-424 424H120Zm453-453-28-28 56 56-28-28Z" />
                                         </svg>
                                     </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </Table>
+                    <Table v-else :fields="fields">
+                        <tbody class="pt-4 h-60">
+                            <tr class="w-full h-full">
+                                <td class="relative" :colspan="fields.length">
+                                    <div class="absolute inset-0 flex justify-center items-center">
+                                        <IconNotFound />
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>

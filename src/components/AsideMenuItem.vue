@@ -22,7 +22,7 @@ function isActive(route) {
             <span class="inline-flex justify-center items-center ml-4">
                 <div v-html="item.icon"></div>
             </span>
-            <span class="ml-2 md:text-xs sm:text-md tracking-wide truncate">{{ item.label }}</span>
+            <span class="ml-2 text-xs tracking-wide truncate">{{ item.label }}</span>
         </router-link>
     </li>
 </template>

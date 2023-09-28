@@ -5,6 +5,7 @@ import Table from '@/components/Table.vue';
 import { useGradeStore } from '@/stores/grade.js';
 import BaseModal from '../../../components/BaseModal.vue';
 import Button from '../../../components/Button.vue';
+import IconNotFound from '../../../components/icons/iconNotFound.vue';
 
 const store = useGradingStore();
 const storeGrade = useGradeStore();
@@ -39,6 +40,18 @@ const input = reactive({
     inputBinding,
 });
 
+const inputBindingStatus = computed(() => {
+    let bindItems = {};
+    getSurahFilter.value.forEach((item, index) => {
+        bindItems[`input${item.nilai_id}`] = "";
+    });
+    return bindItems;
+});
+
+const inputStatus = reactive({
+    inputBindingStatus,
+});
+
 
 
 // mahasiswa
@@ -55,6 +68,12 @@ const mahasiswaId = ref("");
 const sheduleDate = ref("");
 const limit = ref(1);
 const nilai = ref({});
+const status = ref("");
+
+const options = ref([
+    { label: 'Lulus', value: true, selected: false },
+    { label: 'Tidak Lulus', value: false, selected: false },
+])
 
 const resultItems = ref([])
 
@@ -102,8 +121,22 @@ const removeSurah = () => {
     }
 }
 
+const validate = (key, seq) => {
+    let seqSurah = parseInt(seq);
+    if (key == seqSurah) {
+        return true;
+    }
+    return false;
+}
+
 const createGreading = () => {
-    console.log(detailsItems.value)
+    let resutls = []
+    for (let index = 0; index < resultItems.value.length - 1; index++) {
+        if (resultItems.value[index].surah_seq === resultItems.value[index + 1].surah_seq) {
+            resutls.push(resultItems.value[index]);
+        }
+    }
+    console.log(resutls)
 }
 
 const details = computed(() => {
@@ -120,6 +153,13 @@ const details = computed(() => {
     return nilai;
 });
 
+const clearInputBinding = () => {
+    for (const key in input.inputBinding) {
+        input.inputBinding[key] = "";
+    }
+    keterangan.value = ""
+};
+
 const saveTemporarily = () => {
     let payload = {
         penilaian_id: "",
@@ -129,13 +169,13 @@ const saveTemporarily = () => {
         juz: "",
         surah_awalan: 1,
         surah_akhir: parseInt(ayatAkhir.value),
-        is_lulus: true,
+        is_lulus: "",
         keterangan: keterangan.value,
         details: details.value
     }
     resultItems.value.push(payload)
-
-    console.log(resultItems.value)
+    closeModal();
+    clearInputBinding();
 }
 
 watch(sheduleDate, (value) => {
@@ -157,12 +197,24 @@ watch(mahasiswa, (value) => {
     <div>
         <div class="shadow-md rounded-md bg-slate-50 w-full min-h-[70vh] py-8 px-8">
             <div class="grid md:grid-cols-4 mb-4 items-center py-4 gap-2 md:gap-4">
+                <div class="space-x-4 mt-auto col-span-2">
+                    <button class="bg-[#BB2525] rounded-full bg-base" @click="removeSurah">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="#FFF" height="24" viewBox="0 -960 960 960" width="24">
+                            <path d="M200-440v-80h560v80H200Z" />
+                        </svg>
+                    </button>
+                    <button class="bg-[#557A46] rounded-full bg-base" :disabled="detailItems.length <= 0" @click="addSurah">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="#FFF" height="24" viewBox="0 -960 960 960" width="24">
+                            <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
+                        </svg>
+                    </button>
+                </div>
                 <div class="relative min-w-[16vw]">
                     <div>
                         <label for="" class="text-xs leading-3 font-light">Tanggal</label>
                     </div>
                     <input type="date"
-                        class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-blue-500 rounded-md px-2"
+                        class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md px-2"
                         v-model="sheduleDate" />
                 </div>
                 <div class="relative min-w-[16vw]">
@@ -172,7 +224,7 @@ watch(mahasiswa, (value) => {
                 </div>
             </div>
             <div class="relative overflow-x-auto max-h-[50vh]">
-                <table class="text-gray-500 w-full">
+                <table v-if="detailItems.length > 0" class="text-gray-500 w-full">
                     <thead class="text-xs text-white bg-base rounded-md uppercase bg-[#4EBF5F] px-2 sticky top-0">
                         <th v-for="(field, index) in fields" :key="index"
                             :class="index == 0 ? 'rounded-l-md' : index == fields.length - 1 ? 'rounded-r-md' : ''"
@@ -204,35 +256,49 @@ watch(mahasiswa, (value) => {
                             </td>
                             </td>
                             <td>
-                                <div class="space-x-3 flex flex-wrap justify-center">
-                                    <label for="">
+                                <form class="space-x-3 flex flex-wrap justify-center">
+                                    <label for="age1">
+                                        <input type="radio" id="age1" name="status"
+                                            v-model="inputStatus.inputBindingStatus[`${item.seq}`]" value="true">
                                         Lulus
-                                        <input type="checkbox">
                                     </label>
-                                    <label for="">
+                                    <label for="age2">
+                                        <input type="radio" id="age2" name="status"
+                                            v-model="inputStatus.inputBindingStatus[`${item.seq}`]" value="false">
                                         Tidak Lulus
-                                        <input type="checkbox">
                                     </label>
+                                </form>
+                                <!-- <div class="space-x-3 flex flex-wrap justify-center">
+                                    <label v-for="(option, index) in options" :key="index">
+                                        {{ option.label }}
+                                        <input v-model="inputStatus.inputBindingStatus[`${item.seq}`]" :value="option.value" type="checkbox">
+                                    </label>
+                                </div> -->
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table v-else class="text-gray-500 w-full">
+                    <thead class="text-xs text-white bg-base rounded-md uppercase bg-[#4EBF5F] px-2 sticky top-0">
+                        <th v-for="(field, index) in fields" :key="index"
+                            :class="index == 0 ? 'rounded-l-md' : index == fields.length - 1 ? 'rounded-r-md' : ''"
+                            class="py-2 px-2">
+                            {{ field }}
+                        </th>
+                    </thead>
+                    <tbody class="pt-4 h-60">
+                        <tr class="w-full h-full">
+                            <td class="relative" :colspan="fields.length">
+                                <div class="absolute inset-0 flex justify-center items-center">
+                                    <IconNotFound />
                                 </div>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <div class="relative justify-between flex py-4">
-                <div class="space-x-4">
-                    <button class="bg-[#557A46] rounded-full bg-base" :disabled="detailItems.length <= 0" @click="addSurah">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="#FFF" height="24" viewBox="0 -960 960 960" width="24">
-                            <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
-                        </svg>
-                    </button>
-                    <button class="bg-[#BB2525] rounded-full bg-base" @click="removeSurah">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="#FFF" height="24" viewBox="0 -960 960 960" width="24">
-                            <path d="M200-440v-80h560v80H200Z" />
-                        </svg>
-                    </button>
-                </div>
-                <Button @click="createGreading">Simpan Data</Button>
+            <div class="relative py-4">
+                <Button class="ml-auto" @click="createGreading">Simpan Data</Button>
             </div>
             <BaseModal :open="getIsOpen" @close="closeModal" :width="'w-96'">
                 <div class="mb-2">

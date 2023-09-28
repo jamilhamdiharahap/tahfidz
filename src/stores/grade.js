@@ -30,7 +30,7 @@ export const useGradeStore = defineStore('grade', {
         },
 
         updateItemsMhs(results){
-            this.items = results.data
+            this.nilaiItems = results.data
         },
 
         updateModal(status) {

@@ -47,7 +47,7 @@ onMounted(() => {
 
 <template>
     <div>
-        <div class="w-full min-h-[80vh] py-8 px-8">
+        <div class="w-full bg-slate-50 min-h-[70vh] py-8 px-8">
             <div class="flex mb-4 items-center">
                 <div class="mt-auto ml-auto">
                     <Button @click="store.updateModal(true)">

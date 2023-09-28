@@ -2,6 +2,7 @@
 import { onMounted, computed, ref, reactive } from 'vue';
 import { useScheduleStore } from '@/stores/schedule';
 import BaseModal from '../../../components/BaseModal.vue';
+import Button from '../../../components/Button.vue';
 
 const store = useScheduleStore();
 
@@ -143,6 +144,10 @@ const createSchedule = async () => {
     getSchedule();
 }
 
+const clearSchedule = () => {
+    listItem.value = []
+}
+
 const deleteSchedule = async (params) => {
     await store.fetchDeleteSchedule({
         jadwal_id: params,
@@ -208,13 +213,13 @@ onMounted(() => {
                 </div>
             </div>
         </div>
-        <BaseModal :open="isOpen" @close="closeModal" :width="'w-[32vw]'">
-            <div class="py-4">
-                <span class="text-sm leading-5">
-                    JADWAL HAFALAN ({{ title }})
+        <BaseModal :open="isOpen" @close="closeModal" :width="'w-[48vw]'">
+            <div class="py-2 bg-[#F2F2F2] mt-8 rounded-sm px-2">
+                <span class="text-xs leading-3">
+                    Jadwal Hafalan ({{ title }})
                 </span>
             </div>
-            <div class="flex flex-col md:gap-4">
+            <div class="flex flex-col md:gap-4 py-4">
                 <div class="relative">
                     <div>
                         <label class="block text-xs font-light mb-2">
@@ -223,24 +228,23 @@ onMounted(() => {
                         <div class="flex items-center justify-between space-x-3">
                             <div class="w-full min-w-[200px]">
                                 <v-select :clearable="false" :options="getStudent" label="label" v-model="mahasiswa"
-                                    class="style-chooser text-xs leading-4"></v-select>
+                                    class="bg-white rounded-md text-xs"></v-select>
                             </div>
                             <div>
-                                <button :disabled="mahasiswa.length == 0" @click="handleList"
-                                    class="rounded-md mt-auto px-2 py-1 gap-1 bg-base bg-[#0097B1]">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="#FFFFFF" height="24"
-                                        viewBox="0 -960 960 960" width="24">
+                                <Button :disabled="mahasiswa.length == 0" @click="handleList">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="#FFFFFF" height="16"
+                                        viewBox="0 -960 960 960" width="16">
                                         <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
                                     </svg>
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="flex flex-wrap space-x-2 pb-8 pt-2" v-if="listItem.length > 0">
+            <div class="flex flex-wrap gap-y-2 space-x-2 pb-8 pt-2" v-if="listItem.length > 0">
                 <div v-for="item in listItem" :key="item.id"
-                    class="flex items-center bg-[#0097B1] relative px-4 py-1 rounded-xl">
+                    class="flex items-center bg-[#F1C93B] relative px-4 py-1 rounded-xl">
                     <span class="text-xs text-white">
                         {{ item.label }}
                     </span>
@@ -253,17 +257,27 @@ onMounted(() => {
                     </button>
                 </div>
             </div>
-            <div :class="listItem.length > 0 ? '' : 'hidden'">
-                <button @click="createSchedule" class="rounded-md px-2 py-1 bg-base w-full bg-[#9EB23B] text-center">
-                    <span class="flex justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24" fill="#FFFFFF" viewBox="0 -960 960 960"
-                            width="24">
+            <div :class="listItem.length > 0 ? 'flex justify-end' : 'hidden'">
+                <Button @click="clearSchedule" :bg="'bg-[#F2F2F2]'">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="#F2E205" height="16" viewBox="0 -960 960 960" width="16">
+                            <path
+                                d="M482-160q-134 0-228-93t-94-227v-7l-64 64-56-56 160-160 160 160-56 56-64-64v7q0 100 70.5 170T482-240q26 0 51-6t49-18l60 60q-38 22-78 33t-82 11Zm278-161L600-481l56-56 64 64v-7q0-100-70.5-170T478-720q-26 0-51 6t-49 18l-60-60q38-22 78-33t82-11q134 0 228 93t94 227v7l64-64 56 56-160 160Z" />
+                        </svg>
+                    </span>
+                </Button>
+                <Button @click="createSchedule">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="16" fill="#FFFFFF" viewBox="0 -960 960 960"
+                            width="16">
                             <path
                                 d="M730-420v-120H610v-40h120v-120h40v120h120v40H770v120h-40Zm-370-84.615q-49.5 0-84.75-35.25T240-624.615q0-49.501 35.25-84.751 35.25-35.25 84.75-35.25t84.75 35.25Q480-674.116 480-624.615q0 49.5-35.25 84.75T360-504.615ZM80-215.384v-65.847Q80-306 94.423-327.577q14.423-21.577 38.808-33.5 56.615-27.154 113.307-40.731Q303.231-415.385 360-415.385q56.769 0 113.462 13.577 56.692 13.577 113.307 40.731 24.385 11.923 38.808 33.5Q640-306 640-281.231v65.847H80Zm40-40.001h480v-25.846q0-13.307-8.577-25-8.577-11.692-23.731-19.769-49.384-23.923-101.836-36.654Q413.405-375.385 360-375.385q-53.405 0-105.856 12.731Q201.692-349.923 152.308-326q-15.154 8.077-23.731 19.769-8.577 11.693-8.577 25v25.846Zm240-289.23q33 0 56.5-23.5t23.5-56.5q0-33-23.5-56.5t-56.5-23.5q-33 0-56.5 23.5t-23.5 56.5q0 33 23.5 56.5t56.5 23.5Zm0-80Zm0 369.23Z" />
                         </svg>
                     </span>
-                </button>
+                    <span>
+                        Save
+                    </span>
+                </Button>
             </div>
         </BaseModal>
-    </div>
-</template>
+</div></template>

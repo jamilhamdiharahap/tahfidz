@@ -14,7 +14,7 @@ onMounted(() => {
 
 <template>
     <div
-        class="fixed flex flex-col top-14 left-0 md:left-4 bg-[#FFFFFF] opacity-1 w-14 hover:w-64 md:w-64 shadow-xl min-h-[90vh] transition-all duration-300 border-none z-10 sidebar md:rounded-xl">
+        class="fixed flex flex-col top-14 left-2 md:left-4 bg-[#FFFFFF] opacity-1 w-14 hover:w-64 md:w-64 shadow-xl min-h-[90vh] transition-all duration-300 border-none z-10 sidebar rounded-xl">
         <div class="overflow-y-auto overflow-x-hidden flex flex-col justify-between flex-grow">
             <ul class="flex flex-col py-4 space-y-1 md:px-2">
                 <!-- <li class="hidden md:block">

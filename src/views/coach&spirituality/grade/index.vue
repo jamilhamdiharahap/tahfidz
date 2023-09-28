@@ -45,7 +45,7 @@ onMounted(() => {
 
 <template>
     <div>
-        <div class="w-full min-h-[80vh] py-8 px-8">
+        <div class="w-full min-h-[70vh] bg-slate-50 py-8 px-8">
             <div class="flex mb-4 items-center">
                 <div class="relative min-w-[16vw]">
                     <label for="" class="text-xs leading-3 font-light">Status</label>
@@ -71,7 +71,7 @@ onMounted(() => {
                 <div class="relative overflow-x-auto h-auto max-h-full">
                     <Table :fields="fields">
                         <tbody class="pt-4 text-center z-0 text-xs">
-                            <tr class="hover:bg-gray-50" v-for="(item, index) in getItems">
+                            <tr class="hover:bg-gray-50 border-b" v-for="(item, index) in getItems">
                                 <td class="py-4 leading-6">
                                     {{ index + 1 }}
                                 </td>

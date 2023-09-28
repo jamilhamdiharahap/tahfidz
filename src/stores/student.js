@@ -6,6 +6,7 @@ export const useStudentStore = defineStore('student', {
     state: () => ({
         items: [],
         generation_option: [],
+        student_option: [],
         loading: false,
         message: "",
         isOpen: false
@@ -16,6 +17,7 @@ export const useStudentStore = defineStore('student', {
         async fetchStudent(params) {
             const { data } = await getMahasiswa(params);
             this.updateItems(data)
+            this.updateItemStudentFilter(data)
         },
 
         async fetchGeneration(params) {
@@ -27,6 +29,15 @@ export const useStudentStore = defineStore('student', {
             if (Array.isArray(results.data)) {
                 this.generation_option = []
                 results.data.forEach(item => this.generation_option.push({ label: item.nama_angkatan, code: item.angkatan }));
+            } else {
+                console.error('Invalid input');
+            }
+        },
+
+        updateItemStudentFilter(results) {
+            if (Array.isArray(results.data)) {
+                this.student_option = []
+                results.data.forEach(item => this.student_option.push({ label: item.nama_mahasiswa, code: item.mahasiswa_id }));
             } else {
                 console.error('Invalid input');
             }
@@ -71,6 +82,7 @@ export const useStudentStore = defineStore('student', {
     getters: {
         getItems: (state) => state.items,
         getGenerationFilter: (state) => state.generation_option,
+        getStudentFilter: (state) => state.student_option,
         getLoading: (state) => state.loading,
         getIsOpen: (state) => state.isOpen,
     },
