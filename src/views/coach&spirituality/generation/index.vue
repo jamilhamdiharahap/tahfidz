@@ -30,9 +30,23 @@ const form = reactive({
     is_active: true
 });
 
+
 const getItemsActive = computed(() => store.getItemsActive);
 const getIsLoading = computed(() => store.getLoading);
 const getIsOpen = computed(() => store.getIsOpen);
+const getIsOpenUpdate = computed(() => store.getIsOpenUpdate);
+const getFormUpdate = computed(() => store.getFormUpdate);
+
+const angkatan = computed(() => store.getAngkatan);
+const nameAngkatan = computed(() => store.getNameAngkatan);
+
+const formUpdate = reactive({
+    id: "",
+    angkatan: angkatan.value,
+    nama_angkatan: nameAngkatan.value,
+    is_active: true
+});
+
 
 const getGeneration = (payload) => {
     store.fetchGeneration(payload)
@@ -43,21 +57,53 @@ const closeModal = () => {
     store.updateModal(false)
 }
 
+const editGradingById = (param) => {
+    store.fetchGenerationById({ id: param, angkatan: "", nameAngkatan: "", status: "" })
+    store.modalShowUpdate(true)
+}
+
+const handleInputAngkatan = (e) => {
+    angkatan.value = e.target.value
+}
+
+const handleInputAngkatanName = (e) => {
+    nameAngkatan.value = e.target.value
+}
+
+
+
+const editGrading = () => {
+    store.updateGeneration({
+        id: getFormUpdate.value.id,
+        angkatan: angkatan.value,
+        nama_angkatan: nameAngkatan.value,
+        is_active: true
+    })
+
+    angkatan.value = ""
+    nameAngkatan.value = ""
+}
+
+const closeEditGrading = () => {
+    store.modalShowUpdate(false)
+}
+
+
 const createAngkatan = async () => {
     await store.postGeneration(form);
-    getGeneration({ angkatan: "", nameAngkatan: "", status: "" })
+    getGeneration({ id: "", angkatan: "", nameAngkatan: "", status: "" })
 }
 
 watch(status, (value) => {
     if (value == null) {
-        getGeneration({ angkatan: "", nameAngkatan: "", status: "" })
+        getGeneration({ id: "", angkatan: "", nameAngkatan: "", status: "" })
     } else {
-        getGeneration({ angkatan: "", nameAngkatan: "", status: value.code })
+        getGeneration({ id: "", angkatan: "", nameAngkatan: "", status: value.code })
     }
 })
 
 onMounted(() => {
-    getGeneration({ angkatan: "", nameAngkatan: "", status: "" })
+    getGeneration({ id: "", angkatan: "", nameAngkatan: "", status: "" })
 });
 </script>
 
@@ -103,7 +149,7 @@ onMounted(() => {
                                     Active
                                 </td>
                                 <td class="py-4 leading-6">
-                                    <button class="px-2">
+                                    <button class="px-2" @click="editGradingById(item.id)">
                                         <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960"
                                             width="24">
                                             <path
@@ -162,6 +208,44 @@ onMounted(() => {
                     <span
                         :class="getIsLoading ? 'h-6 w-6 block rounded-full border-4 border-t-[#4EBF5F] animate-spin' : ''">
                         {{ getIsLoading ? '' : 'New' }}
+                    </span>
+                </Button>
+            </form>
+        </BaseModal>
+        <BaseModal :open="getIsOpenUpdate" @close="closeEditGrading" :width="'w-96'">
+            <form @submit.prevent="editGrading()" class="py-8">
+                <div class="flex flex-col flex-wrap md:gap-4 space-y-2 mb-6">
+                    <div class="relative h-12 w-auto min-w-[200px]">
+                        <div>
+                            <label class="block text-xs font-light mb-2">
+                                Angkatan
+                            </label>
+                            <input v-model="formUpdate.angkatan"
+                                class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md px-2"
+                                type="text" />
+                        </div>
+                    </div>
+                    <div class="relative h-12 w-auto min-w-[200px]">
+                        <div>
+                            <label class="block text-xs font-light mb-2">
+                                Nama Angkatan
+                            </label>
+                            <input v-model="formUpdate.nama_angkatan"
+                                class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md px-2"
+                                type="text" />
+                        </div>
+                    </div>
+                </div>
+                <Button class="m-auto ml-auto">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16"
+                            fill="#FFFFFF">
+                            <path d="M460-460H240v-40h220v-220h40v220h220v40H500v220h-40v-220Z" />
+                        </svg>
+                    </span>
+                    <span
+                        :class="getIsLoading ? 'h-6 w-6 block rounded-full border-4 border-t-[#4EBF5F] animate-spin' : ''">
+                        {{ getIsLoading ? '' : 'Save' }}
                     </span>
                 </Button>
             </form>

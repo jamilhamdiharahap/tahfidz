@@ -1,9 +1,9 @@
 import instance from "../plugins/axios.js";
 
 
-export async function getAngkatan({ angkatan, nameAngkatan, status }) {
+export async function getAngkatan({id, angkatan, nameAngkatan, status }) {
     try {
-        const data = await instance.get(`/mahasiswa/getAngkatan?id=&angkatan=${angkatan}&nama_angkatan=${nameAngkatan}&is_active=${status}`);
+        const data = await instance.get(`/mahasiswa/getAngkatan?id=${id}&angkatan=${angkatan}&nama_angkatan=${nameAngkatan}&is_active=${status}`);
         return data;
     } catch (err) {
         return err;

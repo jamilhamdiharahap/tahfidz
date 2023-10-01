@@ -6,7 +6,11 @@ export const useGenerationStore = defineStore('generation', {
         itemsActive: [],
         loading: false,
         message: "",
-        isOpen: false
+        isOpen: false,
+        isOpenUpdate: false,
+        getItemById: null,
+        nameAngkatan: "",
+        angkatan: "",
     }),
 
     actions: {
@@ -36,8 +40,43 @@ export const useGenerationStore = defineStore('generation', {
             }
         },
 
-        updateModal(status){
+
+        async fetchGenerationById(params) {
+            const { data } = await getAngkatan(params);
+            this.viewUpdate(data)
+        },
+
+        async updateGeneration(payload) {
+            this.loading = true
+            const { data, status, message } = await postAngkatan(payload);
+            if (status == 200) {
+                setTimeout(() => {
+                    this.loading = false;
+                    this.message = message;
+                    this.modalShowUpdate(false)
+                }, 1000);
+            } else {
+                setTimeout(() => {
+                    this.loading = false;
+                    this.message = message;
+                    this.modalShowUpdate(false)
+                }, 1000);
+            }
+        },
+
+        updateModal(status) {
             this.isOpen = status;
+        },
+
+        viewUpdate(result) {
+            this.getItemById = result.data[0]
+            this.angkatan = result.data[0].angkatan
+            this.nameAngkatan = result.data[0].nama_angkatan
+            
+        },
+
+        modalShowUpdate(status) {
+            this.isOpenUpdate = status;
         }
 
     },
@@ -46,5 +85,9 @@ export const useGenerationStore = defineStore('generation', {
         getItemsActive: (state) => state.itemsActive,
         getLoading: (state) => state.loading,
         getIsOpen: (state) => state.isOpen,
+        getIsOpenUpdate: (state) => state.isOpenUpdate,
+        getFormUpdate: (state) => state.getItemById,
+        getNameAngkatan: (state) => state.nameAngkatan,
+        getAngkatan: (state) => state.angkatan,
     },
 })

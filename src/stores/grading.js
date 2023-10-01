@@ -11,10 +11,10 @@ export const useGradingStore = defineStore('grading', {
     }),
 
     actions: {
-        async fetchGrading(params) {
-            console.log(params)
-            // const { data } = await updateGrading(params);
-            // this.updateItems(data)
+        async fetchGrading(payload) {
+            console.log(payload)
+            const { data } = await updateGrading(payload);
+            console.log(data)
         },
 
         async fetchStudent(params) {
