@@ -21,16 +21,27 @@ export const useGradeStore = defineStore('grade', {
         },
 
         async fetchUpdateGrade(payload) {
-            const { data } = await updateGrade(payload);
-            console.log(data)
+            this.loading = true;
+            const { data, status } = await updateGrade(payload);
+            if (status == 200) {
+                setTimeout(() => {
+                    this.loading = false;
+                    this.updateModal(false);
+                }, 1000);
+            } else {
+                setTimeout(() => {
+                    this.loading = false;
+                    this.updateModal(false);
+                }, 1000);
+            }
         },
 
         updateItems(results) {
-            this.items = results.data
+            this.items = results.data;
         },
 
-        updateItemsMhs(results){
-            this.nilaiItems = results.data
+        updateItemsMhs(results) {
+            this.nilaiItems = results.data;
         },
 
         updateModal(status) {

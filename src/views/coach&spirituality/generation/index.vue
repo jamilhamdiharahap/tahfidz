@@ -19,7 +19,7 @@ const fields = ref([
 const statusItems = ref([
     { label: "Active", code: true },
     { label: "Non Active", code: false },
-])
+]);
 
 const status = ref("");
 
@@ -30,6 +30,7 @@ const form = reactive({
     is_active: true
 });
 
+const payload = reactive({ id: "", angkatan: "", nameAngkatan: "", status: "" });
 
 const getItemsActive = computed(() => store.getItemsActive);
 const getIsLoading = computed(() => store.getLoading);
@@ -49,28 +50,19 @@ const formUpdate = reactive({
 
 
 const getGeneration = (payload) => {
-    store.fetchGeneration(payload)
+    store.fetchGeneration(payload);
 }
 
 const closeModal = () => {
-    store.updateModal(false)
-    store.updateModal(false)
+    store.updateModal(false);
+    store.updateModal(false);
 }
 
 const editGradingById = (param) => {
-    store.fetchGenerationById({ id: param, angkatan: "", nameAngkatan: "", status: "" })
-    store.modalShowUpdate(true)
+    payload.id = param;
+    store.fetchGenerationById(payload);
+    store.modalShowUpdate(true);
 }
-
-const handleInputAngkatan = (e) => {
-    angkatan.value = e.target.value
-}
-
-const handleInputAngkatanName = (e) => {
-    nameAngkatan.value = e.target.value
-}
-
-
 
 const editGrading = () => {
     store.updateGeneration({
@@ -78,32 +70,33 @@ const editGrading = () => {
         angkatan: angkatan.value,
         nama_angkatan: nameAngkatan.value,
         is_active: true
-    })
+    });
 
-    angkatan.value = ""
-    nameAngkatan.value = ""
+    angkatan.value = "";
+    nameAngkatan.value = "";
 }
 
 const closeEditGrading = () => {
-    store.modalShowUpdate(false)
+    store.modalShowUpdate(false);
 }
-
 
 const createAngkatan = async () => {
     await store.postGeneration(form);
-    getGeneration({ id: "", angkatan: "", nameAngkatan: "", status: "" })
+    getGeneration();
 }
 
 watch(status, (value) => {
     if (value == null) {
-        getGeneration({ id: "", angkatan: "", nameAngkatan: "", status: "" })
+        payload.status = "";
+        getGeneration(payload);
     } else {
-        getGeneration({ id: "", angkatan: "", nameAngkatan: "", status: value.code })
+        payload.status = value?.code;
+        getGeneration(payload);
     }
 })
 
 onMounted(() => {
-    getGeneration({ id: "", angkatan: "", nameAngkatan: "", status: "" })
+    getGeneration(payload);
 });
 </script>
 

@@ -263,10 +263,10 @@ watchEffect(() => {
 // watch
 watch(generation, (value) => {
     if (value == null) {
-        payloadStudent.angkatan = ""
+        payloadStudent.angkatan = "";
         getStudentGrade();
     } else {
-        payloadStudent.angkatan = value.code
+        payloadStudent.angkatan = value.code;
         getStudentGrade();
     }
 });

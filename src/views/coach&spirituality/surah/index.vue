@@ -30,7 +30,7 @@ onMounted(() => {
 
 <template>
     <div>
-        <div class="shadow-md rounded-md bg-slate-50 w-full min-h-[50vh] py-5 px-8">
+        <div class="shadow-md rounded-md bg-slate-50 w-full py-5 px-8">
             <div>
                 <div class="relative overflow-x-auto max-h-[70vh]">
                     <Table :fields="fields">

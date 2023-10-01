@@ -14,22 +14,22 @@ export const useGradingStore = defineStore('grading', {
         async fetchGrading(payload) {
             console.log(payload)
             const { data } = await updateGrading(payload);
-            console.log(data)
+            console.log(data);
         },
 
         async fetchStudent(params) {
             const { data } = await getShedule(params);
-            this.updateItemFilter(data)
+            this.updateItemFilter(data);
         },
 
         async fetchSurah(params, { index, limit }) {
             const { data } = await getSurah(params);
-            this.updateItemFilterSurah(data, index, limit)
+            this.updateItemFilterSurah(data, index, limit);
         },
 
         updateItemFilter(results) {
             if (Array.isArray(results.data)) {
-                this.studentOption = []
+                this.studentOption = [];
                 results.data.forEach(item => this.studentOption.push({ label: item.nama_mahasiswa, code: item.mahasiswa_id }));
             } else {
                 console.error('Invalid input');
@@ -46,23 +46,22 @@ export const useGradingStore = defineStore('grading', {
                     arti_surahF: "Para Penghuni Gua",
                     juz_id: "",
                     seq: "0"
-                }
+                };
                 this.surahOption.push(alKahfi);
                 for (let i = 0; i <= limit; i++) {
                     this.surahOption.push(results.data[i])
-                }
-                // results.data.forEach(item => this.surahOption.push({ label: item.nama_surah, code: item.seq }));
+                };
             } else {
                 console.error('Invalid input');
             }
         },
 
         updateItems(results) {
-            this.items = results.data
+            this.items = results.data;
         },
 
         updateIsOpen(status) {
-            this.isOpen = status
+            this.isOpen = status;
         }
     },
 

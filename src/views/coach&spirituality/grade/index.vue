@@ -1,8 +1,10 @@
 <script setup>
-import { onMounted, computed, ref, reactive } from 'vue';
+import { onMounted, computed, ref, reactive, watch } from 'vue';
 import Table from '@/components/Table.vue';
 import { useGradeStore } from '@/stores/grade.js';
-import Button from '../../../components/Button.vue';
+import Button from '@/components/Button.vue';
+import IconNotFound from '@/components/icons/iconNotFound.vue';
+import BaseModal from '@/components/BaseModal.vue';
 
 const store = useGradeStore();
 
@@ -22,22 +24,54 @@ const formUpdate = reactive(
 );
 
 const statusItems = ref([{ label: "Active", code: true }, { label: "Non Active", code: false }]);
+const payload = reactive({ nilaiId: "", status: "" })
+const nilai = ref("");
 const status = ref("");
 
-const getItems = computed(() => store.getItems);
 
+// computed
+const getItems = computed(() => store.getItems);
+const getIsOpen = computed(() => store.getIsOpen);
+const getIsLoading = computed(() => store.getLoading);
+
+
+// methods
+
+const createGrade = async () => {
+    await store.fetchUpdateGrade({
+        nilai_id: "",
+        nama_penilaian: nilai.value,
+        is_active: true
+    });
+    store.updateModal(false);
+    nilai.value = "";
+    getGrade();
+}
 
 const updateStatus = async (params) => {
     formUpdate.nilai_id = params.nilai_id;
     formUpdate.nama_penilaian = params.nama_penilaian;
     formUpdate.is_active = params.is_active == 'true' ? 'false' : 'true';
 
-   await store.fetchUpdateGrade(formUpdate);
-   getGrade();
-} 
-const getGrade = () => store.fetchGrade({ nilaiId: "", status: "" });
+    await store.fetchUpdateGrade(formUpdate);
+    getGrade();
+}
+
+const getGrade = () => store.fetchGrade(payload);
 
 
+// watch
+watch(status, (value) => {
+    if (value != null) {
+        payload.status = value?.code;
+    } else {
+        payload.status = "";
+    }
+    getGrade();
+})
+
+
+// mounted
 onMounted(() => {
     getGrade();
 });
@@ -45,7 +79,7 @@ onMounted(() => {
 
 <template>
     <div>
-        <div class="w-full min-h-[70vh] bg-slate-50 py-8 px-8">
+        <div class="w-full bg-slate-50 py-8 px-8">
             <div class="flex mb-4 items-center">
                 <div class="relative min-w-[16vw]">
                     <label for="" class="text-xs leading-3 font-light">Status</label>
@@ -53,7 +87,7 @@ onMounted(() => {
                         class="text-xs leading-4"></v-select>
                 </div>
                 <div class="mt-auto ml-auto">
-                    <Button>
+                    <Button @click="store.updateModal(true)">
                         <span>
                             <svg xmlns="http://www.w3.org/2000/svg" height="16" fill="#FFFFFF" viewBox="0 -960 960 960"
                                 width="16">
@@ -68,8 +102,8 @@ onMounted(() => {
                 </div>
             </div>
             <div>
-                <div class="relative overflow-x-auto h-auto max-h-full">
-                    <Table :fields="fields">
+                <div class="relative overflow-x-auto max-h-[60vh]">
+                    <Table v-if="getItems.length > 0" :fields="fields">
                         <tbody class="pt-4 text-center z-0 text-xs">
                             <tr class="hover:bg-gray-50 border-b" v-for="(item, index) in getItems">
                                 <td class="py-4 leading-6">
@@ -103,10 +137,47 @@ onMounted(() => {
                             </tr>
                         </tbody>
                     </Table>
+                    <Table v-else :fields="fields">
+                        <tbody class="pt-4 h-60">
+                            <tr class="w-full h-full">
+                                <td class="relative" :colspan="fields.length">
+                                    <div class="absolute inset-0 flex justify-center items-center">
+                                        <IconNotFound />
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </Table>
                 </div>
             </div>
         </div>
     </div>
+    <BaseModal :open="getIsOpen" @close="store.updateModal(false)" :width="'w-96'">
+        <form @submit.prevent="createGrade" class="py-8">
+            <div class="flex flex-col flex-wrap md:gap-4 space-y-2 mb-6">
+                <div class="relative h-12 w-auto min-w-[200px]">
+                    <div>
+                        <label class="block text-xs font-light mb-2">
+                            Nilai
+                        </label>
+                        <input v-model="nilai"
+                            class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md px-2"
+                            type="text">
+                    </div>
+                </div>
+            </div>
+            <Button type="submit" class="m-auto ml-auto">
+                <span>
+                    <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16" fill="#FFFFFF">
+                        <path d="M460-460H240v-40h220v-220h40v220h220v40H500v220h-40v-220Z" />
+                    </svg>
+                </span>
+                <span :class="getIsLoading ? 'h-6 w-6 block rounded-full border-4 border-t-[#4EBF5F] animate-spin' : ''">
+                    {{ getIsLoading ? '' : 'New' }}
+                </span>
+            </Button>
+        </form>
+    </BaseModal>
 </template>
 
 <style scoped></style>

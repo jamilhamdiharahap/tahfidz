@@ -34,7 +34,10 @@ const form = reactive({
     is_active: true,
     angkatan: "",
     is_deleted: "true"
-})
+});
+
+const payload = reactive({ id: "", angkatan: "", nameAngkatan: "", status: "" });
+const payloadStudent = reactive({ angkatan: "", nameAngkatan: "", status: "" });
 
 const getItems = computed(() => store.getItems)
 const getGenerationFilter = computed(() => store.getGenerationFilter)
@@ -42,16 +45,16 @@ const getIsLoading = computed(() => store.getLoading);
 const getIsOpen = computed(() => store.getIsOpen);
 
 
-const getStudent = (payload) => {
-    store.fetchStudent(payload)
+const getStudent = () => {
+    store.fetchStudent(payloadStudent)
 }
 
 const createStudent = async () => {
     await store.postStudent(form);
-    getStudent({ angkatan: "", nameAngkatan: "", status: "" })
+    getStudent()
 }
 
-const getGeneration = (payload) => {
+const getGeneration = () => {
     store.fetchGeneration(payload)
 }
 
@@ -59,32 +62,32 @@ const closeModal = () => {
     store.updateModal(false)
 }
 
+function updatePayloadAndGetData(value, property) {
+    if (value == null) {
+        payloadStudent[property] = "";
+    } else {
+        payloadStudent[property] = value.code;
+    }
+    getStudent();
+}
 
 watch(status, (value) => {
-    if (value == null) {
-        getStudent({ angkatan: "", nameAngkatan: "", status: "" })
-    } else {
-        getStudent({ angkatan: "", nameAngkatan: "", status: value.code })
-    }
+    updatePayloadAndGetData(value, "status");
 });
 
 watch(angkatan, (value) => {
-    if (value == null) {
-        getStudent({ angkatan: "", nameAngkatan: "", status: "" })
-    } else {
-        getStudent({ angkatan: value.code, nameAngkatan: "", status: status.value })
-    }
+    updatePayloadAndGetData(value, "angkatan");
 });
 
 onMounted(() => {
-    getStudent({ angkatan: "", nameAngkatan: "", status: "" })
-    getGeneration({ angkatan: "", nameAngkatan: "", status: "" })
+    getStudent();
+    getGeneration();
 });
 </script>
 
 <template>
     <div>
-        <div class="shadow-md rounded-md bg-slate-50 w-full min-h-[50vh] px-8">
+        <div class="shadow-md rounded-md bg-slate-50 w-full px-8">
             <div class="flex mb-4 items-center gap-4 py-6">
                 <div class="relative min-w-[16vw]">
                     <label for="" class="text-sm leading-3 font-light">Angkatan</label>
@@ -160,7 +163,7 @@ onMounted(() => {
                 </div>
             </div>
         </div>
-        <BaseModal :open="getIsOpen" @close="closeModal" :width="'w-[32vw]'">
+        <BaseModal :open="getIsOpen" @close="closeModal" :width="'w-[32vw]'" :notClose="'ok'">
             <form @submit.prevent="createStudent" class="py-8">
                 <div class="flex flex-col flex-wrap md:gap-4 space-y-2 mb-6">
                     <div class="relative h-12 space-x-3 w-auto min-w-[200px]">

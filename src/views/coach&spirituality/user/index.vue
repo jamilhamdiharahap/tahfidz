@@ -18,6 +18,8 @@ const fields = ref([
     "Action",
 ]);
 
+const isOpenDelete = ref(false);
+
 const getItems = computed(() => store.getItems);
 const getIsOpen = computed(() => store.getIsOpen);
 const getIsLoading = computed(() => store.getLoading);
@@ -38,6 +40,14 @@ const form = reactive(
 
 const getUser = () => store.fetchUser({ userId: searchUser.value });
 const createUser = () => store.fetchCreateUser(form);
+
+const deleteUser = () => {
+    form.user_active = false;
+    store.fetchCreateUser(form);
+    form.user_active = true;
+    getUser();
+    isOpenDelete.value = false;
+}
 
 
 onMounted(() => {
@@ -105,7 +115,7 @@ onMounted(() => {
                                                 d="M200-200h56l345-345-56-56-345 345v56Zm572-403L602-771l113-113 169 169-112 112ZM120-120v-170l424-424 170 170-424 424H120Zm453-453-28-28 56 56-28-28Z" />
                                         </svg>
                                     </button>
-                                    <button class="px-2">
+                                    <button class="px-2" @click="isOpenDelete = true">
                                         <svg fill="#C63D2F" xmlns="http://www.w3.org/2000/svg" height="24"
                                             viewBox="0 -960 960 960" width="24">
                                             <path
@@ -186,6 +196,25 @@ onMounted(() => {
                     </span>
                 </Button>
             </form>
+        </BaseModal>
+        <BaseModal :open="isOpenDelete" @close="isOpenDelete = false" :width="'w-96'">
+            <div class="py-4">
+                <div class="mx-auto py-2">
+                    <p class="text-xs leading-3 text-center my-4">Apakah Anda Ingin Menghapus Akun Ini ?</p>
+                </div>
+                <div class="flex justify-center">
+                    <Button class="bg-[#C63D2F]" @click="deleteUser">
+                        <span>
+                            Yes
+                        </span>
+                    </Button>
+                    <Button class="bg-[#B4B4B3]" @click="isOpenDelete = false">
+                        <span>
+                            Cancel
+                        </span>
+                    </Button>
+                </div>
+            </div>
         </BaseModal>
     </div>
 </template>
