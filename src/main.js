@@ -7,7 +7,7 @@ import App from './App.vue'
 import router from './router/index.js';
 
 router.beforeEach((to, from, next) => {
-    document.title = to.meta.title == undefined ? '': "Page | " + to.meta.title  || 'Title';
+    document.title = to.meta.title == undefined ? '': "PUB - " + to.meta.title  || 'Title';
     next();
 });
 

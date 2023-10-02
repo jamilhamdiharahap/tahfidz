@@ -3,7 +3,7 @@
       <div class="modal-mask">
         <div class="modal-wrapper">
           <div class="modal-container" :class="width">
-            <div class="modal-header" :class="cek == false ? 'hidden' : ''">
+            <div class="modal-header">
               <button class="times" @click="$emit('close')">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="#3F3F44" height="24" viewBox="0 -960 960 960" width="24">
                   <path

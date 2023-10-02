@@ -139,7 +139,7 @@ onMounted(() => {
                                 </td>
                                 <td class="py-4 leading-6">
                                     <button class="px-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960"
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="#E9B824" height="24" viewBox="0 -960 960 960"
                                             width="24">
                                             <path
                                                 d="M200-200h56l345-345-56-56-345 345v56Zm572-403L602-771l113-113 169 169-112 112ZM120-120v-170l424-424 170 170-424 424H120Zm453-453-28-28 56 56-28-28Z" />

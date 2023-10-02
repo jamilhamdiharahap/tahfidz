@@ -38,19 +38,34 @@ const getIsOpen = computed(() => store.getIsOpen);
 const getIsOpenUpdate = computed(() => store.getIsOpenUpdate);
 const getFormUpdate = computed(() => store.getFormUpdate);
 
-const angkatan = computed(() => store.getAngkatan);
-const nameAngkatan = computed(() => store.getNameAngkatan);
+const angkatan = computed({
+    get() {
+        return store.getAngkatan;
+    },
+    set(value) {
+        store.updateAngkatan(value);
+    }
+});
+
+const nameAngkatan = computed({
+    get() {
+        return store.getNameAngkatan;
+    },
+    set(value) {
+        store.updateNameAngkatan(value);
+    }
+});
 
 const formUpdate = reactive({
     id: "",
-    angkatan: angkatan.value,
-    nama_angkatan: nameAngkatan.value,
+    angkatan: "",
+    nama_angkatan: "",
     is_active: true
 });
 
 
-const getGeneration = (payload) => {
-    store.fetchGeneration(payload);
+const getGeneration = async (payload) => {
+    await store.fetchGeneration(payload);
 }
 
 const closeModal = () => {
@@ -64,16 +79,13 @@ const editGradingById = (param) => {
     store.modalShowUpdate(true);
 }
 
-const editGrading = () => {
-    store.updateGeneration({
-        id: getFormUpdate.value.id,
-        angkatan: angkatan.value,
-        nama_angkatan: nameAngkatan.value,
-        is_active: true
-    });
-
-    angkatan.value = "";
-    nameAngkatan.value = "";
+const editGrading = async () => {
+    formUpdate.id = getFormUpdate.value;
+    formUpdate.angkatan = angkatan.value;
+    formUpdate.nama_angkatan = nameAngkatan.value;
+    payload.id = "";
+    await store.updateGeneration(formUpdate);
+    await getGeneration(payload);
 }
 
 const closeEditGrading = () => {
@@ -143,7 +155,7 @@ onMounted(() => {
                                 </td>
                                 <td class="py-4 leading-6">
                                     <button class="px-2" @click="editGradingById(item.id)">
-                                        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960"
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="#E9B824" height="24" viewBox="0 -960 960 960"
                                             width="24">
                                             <path
                                                 d="M200-200h56l345-345-56-56-345 345v56Zm572-403L602-771l113-113 169 169-112 112ZM120-120v-170l424-424 170 170-424 424H120Zm453-453-28-28 56 56-28-28Z" />
@@ -213,7 +225,7 @@ onMounted(() => {
                             <label class="block text-xs font-light mb-2">
                                 Angkatan
                             </label>
-                            <input v-model="formUpdate.angkatan"
+                            <input v-model="angkatan"
                                 class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md px-2"
                                 type="text" />
                         </div>
@@ -223,7 +235,7 @@ onMounted(() => {
                             <label class="block text-xs font-light mb-2">
                                 Nama Angkatan
                             </label>
-                            <input v-model="formUpdate.nama_angkatan"
+                            <input v-model="nameAngkatan"
                                 class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md px-2"
                                 type="text" />
                         </div>

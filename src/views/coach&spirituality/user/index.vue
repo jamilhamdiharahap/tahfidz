@@ -41,12 +41,15 @@ const form = reactive(
 const getUser = () => store.fetchUser({ userId: searchUser.value });
 const createUser = () => store.fetchCreateUser(form);
 
-const deleteUser = () => {
-    form.user_active = false;
-    store.fetchCreateUser(form);
-    form.user_active = true;
+// const modalDelete = (paramId) => {
+//     isOpenDelete.value = true;
+//     username.value = paramId;
+// }
+
+const updateStatusUser = async (paramId) => {
+    await store.fetchDeleteUser(paramId);
     getUser();
-    isOpenDelete.value = false;
+    // isOpenDelete.value = false;
 }
 
 
@@ -109,17 +112,24 @@ onMounted(() => {
                                 </td>
                                 <td class="py-4 leading-6">
                                     <button class="px-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960"
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="#E9B824" height="24" viewBox="0 -960 960 960"
                                             width="24">
                                             <path
                                                 d="M200-200h56l345-345-56-56-345 345v56Zm572-403L602-771l113-113 169 169-112 112ZM120-120v-170l424-424 170 170-424 424H120Zm453-453-28-28 56 56-28-28Z" />
                                         </svg>
                                     </button>
-                                    <button class="px-2" @click="isOpenDelete = true">
-                                        <svg fill="#C63D2F" xmlns="http://www.w3.org/2000/svg" height="24"
+                                    <button :disabled="item.user_name == 'pembina'" class="px-2" v-if="item.is_active == 'true'" @click="updateStatusUser(item.user_name)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="#4EBF5F" height="24"
                                             viewBox="0 -960 960 960" width="24">
                                             <path
-                                                d="M200-120v-600h-40v-80h200v-40h240v40h200v80h-40v600H200Zm80-80h400v-520H280v520Zm80-80h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+                                                d="M280-260.001q-91.666 0-155.832-64.14-64.167-64.14-64.167-155.768 0-91.629 64.167-155.859Q188.334-699.999 280-699.999h400q91.666 0 155.832 64.14 64.167 64.14 64.167 155.768 0 91.629-64.167 155.859Q771.666-260.001 680-260.001H280ZM280-320h400q66 0 113-47t47-113q0-66-47-113t-113-47H280q-66 0-113 47t-47 113q0 66 47 113t113 47Zm399.955-50.001q45.814 0 77.929-32.07t32.115-77.884q0-45.814-32.07-77.929t-77.884-32.115q-45.814 0-77.929 32.07t-32.115 77.884q0 45.814 32.07 77.929t77.884 32.115ZM480-480Z" />
+                                        </svg>
+                                    </button>
+                                    <button class="px-2" v-else @click="updateStatusUser(item.user_name)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="#C63D2F" height="24"
+                                            viewBox="0 -960 960 960" width="24">
+                                            <path
+                                                d="M280-260.001q-91.666 0-155.832-64.14-64.167-64.14-64.167-155.768 0-91.629 64.167-155.859Q188.334-699.999 280-699.999h400q91.666 0 155.832 64.14 64.167 64.14 64.167 155.768 0 91.629-64.167 155.859Q771.666-260.001 680-260.001H280ZM280-320h400q66 0 113-47t47-113q0-66-47-113t-113-47H280q-66 0-113 47t-47 113q0 66 47 113t113 47Zm-.045-50.001q45.814 0 77.929-32.07t32.115-77.884q0-45.814-32.07-77.929t-77.884-32.115q-45.814 0-77.929 32.07t-32.115 77.884q0 45.814 32.07 77.929t77.884 32.115ZM480-480Z" />
                                         </svg>
                                     </button>
                                 </td>
@@ -197,13 +207,13 @@ onMounted(() => {
                 </Button>
             </form>
         </BaseModal>
-        <BaseModal :open="isOpenDelete" @close="isOpenDelete = false" :width="'w-96'">
+        <!-- <BaseModal :open="isOpenDelete" @close="() => isOpenDelete = false" :width="'w-96'">
             <div class="py-4">
                 <div class="mx-auto py-2">
                     <p class="text-xs leading-3 text-center my-4">Apakah Anda Ingin Menghapus Akun Ini ?</p>
                 </div>
                 <div class="flex justify-center">
-                    <Button class="bg-[#C63D2F]" @click="deleteUser">
+                    <Button class="bg-[#C63D2F]" @click="updateStatusUser">
                         <span>
                             Yes
                         </span>
@@ -215,7 +225,7 @@ onMounted(() => {
                     </Button>
                 </div>
             </div>
-        </BaseModal>
+        </BaseModal> -->
     </div>
 </template>
 

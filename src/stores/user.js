@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia'
 import {
     getUser,
-    postUser
+    postUser,
+    deleteUser
 } from '../service/userService.js';
 
 export const useUserStore = defineStore('user', {
@@ -34,6 +35,25 @@ export const useUserStore = defineStore('user', {
                 }, 1000);
             }
         },
+
+        async fetchDeleteUser(username) {
+            this.loading = true;
+            const { data, status, message } = await deleteUser(username);
+            if (status == 200) {
+                setTimeout(() => {
+                    this.loading = false;
+                    this.message = message;
+                    this.updateModal(false)
+                }, 1000);
+            } else {
+                setTimeout(() => {
+                    this.loading = false;
+                    this.message = message;
+                    this.updateModal(false)
+                }, 1000);
+            }
+        },
+
         updateItems(results) {
             this.items = results.data
         },

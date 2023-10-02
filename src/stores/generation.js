@@ -54,12 +54,16 @@ export const useGenerationStore = defineStore('generation', {
                     this.loading = false;
                     this.message = message;
                     this.modalShowUpdate(false)
+                    this.angkatan = "";
+                    this.nameAngkatan = "";
                 }, 1000);
             } else {
                 setTimeout(() => {
                     this.loading = false;
                     this.message = message;
-                    this.modalShowUpdate(false)
+                    this.modalShowUpdate(false);
+                    this.angkatan = "";
+                    this.nameAngkatan = "";
                 }, 1000);
             }
         },
@@ -69,7 +73,7 @@ export const useGenerationStore = defineStore('generation', {
         },
 
         viewUpdate(result) {
-            this.getItemById = result.data[0]
+            this.getItemById = result.data[0].id
             this.angkatan = result.data[0].angkatan
             this.nameAngkatan = result.data[0].nama_angkatan
             
@@ -77,6 +81,14 @@ export const useGenerationStore = defineStore('generation', {
 
         modalShowUpdate(status) {
             this.isOpenUpdate = status;
+        },
+
+        updateAngkatan(angkatan){
+            this.angkatan = angkatan;
+        },
+
+        updateNameAngkatan(nameAngkatan){
+            this.nameAngkatan = nameAngkatan;
         }
 
     },
