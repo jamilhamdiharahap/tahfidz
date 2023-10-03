@@ -23,8 +23,13 @@ const isOpenDelete = ref(false);
 const getItems = computed(() => store.getItems);
 const getIsOpen = computed(() => store.getIsOpen);
 const getIsLoading = computed(() => store.getLoading);
+const getIsOpenUpdate = computed(() => store.getIsOpenUpdate);
 
-const searchUser = ref("");
+const payloadUser = reactive({
+    userId: "",
+    flag: true
+});
+
 
 const form = reactive(
     {
@@ -38,11 +43,18 @@ const form = reactive(
     }
 );
 
-const getUser = () => store.fetchUser({ userId: searchUser.value });
+const getUser = () => store.fetchUser(payloadUser);
+
 const createUser = () => {
     store.fetchCreateUser(form);
     getUser();
-} 
+}
+
+const editUserById = (userId) => {
+    payloadUser.flag = false;
+    payloadUser.userId = userId;
+    getUser();
+}
 
 // const modalDelete = (paramId) => {
 //     isOpenDelete.value = true;
@@ -114,14 +126,15 @@ onMounted(() => {
                                     {{ item.created_date }}
                                 </td>
                                 <td class="py-4 leading-6">
-                                    <button class="px-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="#E9B824" height="24" viewBox="0 -960 960 960"
-                                            width="24">
+                                    <button class="px-2" @click="editUserById(item.user_id)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="#E9B824" height="24"
+                                            viewBox="0 -960 960 960" width="24">
                                             <path
                                                 d="M200-200h56l345-345-56-56-345 345v56Zm572-403L602-771l113-113 169 169-112 112ZM120-120v-170l424-424 170 170-424 424H120Zm453-453-28-28 56 56-28-28Z" />
                                         </svg>
                                     </button>
-                                    <button :disabled="item.user_name == 'pembina'" class="px-2" v-if="item.is_active == 'true'" @click="updateStatusUser(item.user_name)">
+                                    <button :disabled="item.user_name == 'pembina'" class="px-2"
+                                        v-if="item.is_active == 'true'" @click="updateStatusUser(item.user_name)">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="#4EBF5F" height="24"
                                             viewBox="0 -960 960 960" width="24">
                                             <path
@@ -206,6 +219,64 @@ onMounted(() => {
                     <span
                         :class="getIsLoading ? 'h-6 w-6 block rounded-full border-4 border-t-[#4EBF5F] animate-spin' : ''">
                         {{ getIsLoading ? '' : 'New' }}
+                    </span>
+                </Button>
+            </form>
+        </BaseModal>
+        <BaseModal :open="getIsOpenUpdate" @close="store.updateModalUpdate(false)" :width="'w-96'">
+            <form @submit.prevent="" class="py-8">
+                <div class="flex flex-col flex-wrap md:gap-4 space-y-2 mb-6">
+                    <div class="relative h-12 w-auto min-w-[200px]">
+                        <div>
+                            <label class="block text-xs font-light mb-2">
+                                Username
+                            </label>
+                            <input
+                                class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md px-2"
+                                type="text" />
+                        </div>
+                    </div>
+                    <div class="relative h-12 w-auto min-w-[200px]">
+                        <div>
+                            <label class="block text-xs font-light mb-2">
+                                Kata Sandi
+                            </label>
+                            <input
+                                class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md px-2"
+                                type="password" />
+                        </div>
+                    </div>
+                    <div class="relative h-12 w-auto min-w-[200px]">
+                        <div>
+                            <label class="block text-xs font-light mb-2">
+                                Nama Lengkap
+                            </label>
+                            <input
+                                class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md px-2"
+                                type="text" />
+                        </div>
+                    </div>
+                    <div class="relative h-12 w-auto min-w-[200px]">
+                        <div>
+                            <label class="block text-xs font-light mb-2">
+                                No. Hp
+                            </label>
+                            <input
+                                class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md px-2"
+                                type="text" />
+                        </div>
+                    </div>
+                </div>
+                <Button class="m-auto ml-auto">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16"
+                            fill="#FFFFFF">
+                            <path d="M460-460H240v-40h220v-220h40v220h220v40H500v220h-40v-220Z" />
+                        </svg>
+                    </span>
+                    <span
+                        :class="getIsLoading ? 'h-6 w-6 block rounded-full border-4 border-t-[#4EBF5F] animate-spin' : ''">
+                        {{ getIsLoading ? '' : 'Save' }}
                     </span>
                 </Button>
             </form>

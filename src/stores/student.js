@@ -9,15 +9,32 @@ export const useStudentStore = defineStore('student', {
         student_option: [],
         loading: false,
         message: "",
-        isOpen: false
-
+        isOpen: false,
+        isOpenUpdate: false,
+        payloadUpdate: {
+            mahasiswa_id: "",
+            nama_mahasiswa: "",
+            email: "",
+            nomor_hp: "",
+            is_active: true,
+            angkatan: "",
+            is_deleted: ""
+        }
     }),
 
     actions: {
         async fetchStudent(params) {
             const { data } = await getMahasiswa(params);
-            this.updateItems(data)
-            this.updateItemStudentFilter(data)
+            if (params.flag) {
+                this.updateItems(data);
+                this.updateItemStudentFilter(data);
+            } else {
+                this.payloadUpdate.nama_mahasiswa = data?.data[0].nama_mahasiswa;
+                this.payloadUpdate.email = data?.data[0].email;
+                this.payloadUpdate.nomor_hp = data?.data[0].nomor_hp;
+                this.payloadUpdate.angkatan = data?.data[0].angkatan;
+                this.updateModalUpdate(true);
+            }
         },
 
         async fetchGeneration(params) {
@@ -76,7 +93,11 @@ export const useStudentStore = defineStore('student', {
 
         updateModal(status) {
             this.isOpen = status;
-        }
+        },
+
+        updateModalUpdate(status) {
+            this.isOpenUpdate = status
+        },
     },
 
     getters: {
@@ -85,5 +106,6 @@ export const useStudentStore = defineStore('student', {
         getStudentFilter: (state) => state.student_option,
         getLoading: (state) => state.loading,
         getIsOpen: (state) => state.isOpen,
+        getIsOpenUpdate: (state) => state.isOpenUpdate,
     },
 })

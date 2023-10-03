@@ -11,12 +11,26 @@ export const useUserStore = defineStore('user', {
         isOpen: false,
         loading: false,
         message: "",
+        isOpenUpdate: false,
+        updateUser: {
+            user_name: "",
+            user_password: "",
+            user_active: true,
+            role_id: 0,
+            mail: "",
+            full_name: "",
+            phone: ""
+        }
     }),
 
     actions: {
         async fetchUser(params) {
             const { data } = await getUser(params);
-            this.updateItems(data)
+            if(params.flag){
+                this.updateItems(data);
+            }else{
+                this.updateModalUpdate(true);
+            }
         },
         async fetchCreateUser(payload) {
             this.loading = true;
@@ -59,12 +73,17 @@ export const useUserStore = defineStore('user', {
         },
         updateModal(status) {
             this.isOpen = status;
-        }
+        },
+
+        updateModalUpdate(status) {
+            this.isOpenUpdate = status
+        },
     },
 
     getters: {
         getItems: (state) => state.items,
         getIsOpen: (state) => state.isOpen,
         getLoading: (state) => state.loading,
+        getIsOpenUpdate: (state) => state.isOpenUpdate,
     },
 })
