@@ -4,9 +4,9 @@ import { useGradingStore } from "@/stores/grading.js";
 import { useStudentStore } from "@/stores/student.js";
 import { useGradeStore } from '@/stores/grade.js';
 import Table from '@/components/Table.vue';
-import BaseModal from '../../../components/BaseModal.vue';
-import Button from '../../../components/Button.vue';
-import IconNotFound from '../../../components/icons/iconNotFound.vue';
+import BaseModal from '@/components/BaseModal.vue';
+import Button from '@/components/Button.vue';
+import IconNotFound from '@/components/icons/iconNotFound.vue';
 
 const store = useGradingStore();
 const storeGrade = useGradeStore();
@@ -15,6 +15,8 @@ const getItemGrade = computed(() => storeGrade.getItems)
 const getStudentFilter = computed(() => store.getStudentFilter);
 const getSurahFilter = computed(() => store.getSurahFilter);
 const getIsOpen = computed(() => store.getIsOpen);
+const isOpenGrade = ref(false);
+const gradeItems = ref("");
 
 const detailItems = computed(() => {
     let items = []
@@ -230,6 +232,12 @@ const viewsGrading = async () => {
     }
 }
 
+const viewGradeBySurah = (params) => {
+    isOpenGrade.value = true;
+    gradeItems.value = params;
+    console.log(gradeItems.value)
+}
+
 
 const seeGrade = async () => {
     await storeMhs.fetchGradeMhs({ surahId: "", tanggal: "", mahasiswaId: student.value?.code })
@@ -439,13 +447,13 @@ watch(generation, (value) => {
                                 <p class="hover:text-blue-dark text-xs">{{ grade.nama_surah }}</p>
                             </div>
                             <div class="overflow-x-auto min-w-[40px]">
-                                <div class="w-1/5 h-10 text-right p-3 relative">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="#FFCC70" height="24"
+                                <button @click="viewGradeBySurah(grade)" class="w-1/5 h-10 text-right p-3 relative">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="24" fill="#4EBF5F"
                                         viewBox="0 -960 960 960" width="24">
                                         <path
-                                            d="m354-247 126-76 126 77-33-144 111-96-146-13-58-136-58 135-146 13 111 97-33 143ZM233-80l65-281L80-550l288-25 112-265 112 265 288 25-218 189 65 281-247-149L233-80Zm247-350Z" />
+                                            d="M480-320q75 0 127.5-52.5T660-500q0-75-52.5-127.5T480-680q-75 0-127.5 52.5T300-500q0 75 52.5 127.5T480-320Zm0-72q-45 0-76.5-31.5T372-500q0-45 31.5-76.5T480-608q45 0 76.5 31.5T588-500q0 45-31.5 76.5T480-392Zm0 192q-146 0-266-81.5T40-500q54-137 174-218.5T480-800q146 0 266 81.5T920-500q-54 137-174 218.5T480-200Zm0-300Zm0 220q113 0 207.5-59.5T832-500q-50-101-144.5-160.5T480-720q-113 0-207.5 59.5T128-500q50 101 144.5 160.5T480-280Z" />
                                     </svg>
-                                </div>
+                                </button>
                             </div>
                             <div class="w-1/5 h-10 text-right p-3">
                                 <p class="text-xs text-grey-dark">{{ grade.keterangan }}</p>
@@ -461,8 +469,7 @@ watch(generation, (value) => {
                 </div>
             </template>
             <div :class="{ 'hidden': !viewGrade }" class="relative py-4 space-y-2">
-                <Button :disabled="resultItems.length == 0" class="ml-auto"
-                    @click="createGreading">Simpan Data</Button>
+                <Button :disabled="resultItems.length == 0" class="ml-auto" @click="createGreading">Simpan Data</Button>
             </div>
             <BaseModal :open="getIsOpen" @close="closeModal" :width="'w-96'">
                 <div class="mb-2">
@@ -485,6 +492,39 @@ watch(generation, (value) => {
                     <Button class="ml-auto" @click="saveTemporarily">
                         Simpan
                     </Button>
+                </div>
+            </BaseModal>
+            <BaseModal :open="isOpenGrade" @close="() => isOpenGrade = false" :width="'w-96'">
+                <div class="py-4 space-y-2">
+                    <h1 class="text-xl font-light">Detail Penilaian</h1>
+                    <div class="text-xs">
+                        <p>Nama : {{ gradeItems.nama_mahasiswa }}</p>
+                    </div>
+                    <div class="text-xs">
+                        <p>Surah : {{ gradeItems.nama_surah }} ({{ gradeItems.surah == "0" ? 1 :  gradeItems.surah }})</p>
+                    </div>
+                    <div class="text-xs">
+                        <p>Nama Surah : {{ gradeItems.nama_surah }}</p>
+                    </div>
+                </div>
+                <div>
+                    <ul class="max-w-md divide-y divide-gray-200 overflow-y-auto min-h-[10vw]">
+                        <li class="pb-3 sm:pb-4" v-for="item in gradeItems.details">
+                            <div class="flex items-center space-x-4">
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm text-gray-500 truncate">
+                                        {{ item.nama_penilaian }}
+                                    </p>
+                                </div>
+                                <div class="inline-flex items-center text-xs font-semibold text-[#525252]">
+                                    {{ item.nilai }}
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="text-end">
+                    <p class="ml-auto text-sm">{{ gradeItems.average }}</p>
                 </div>
             </BaseModal>
         </div>

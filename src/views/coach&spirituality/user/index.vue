@@ -1,9 +1,9 @@
 <script setup>
 import { onMounted, computed, ref } from 'vue';
 import Table from '@/components/Table.vue';
-import BaseModal from '../../../components/BaseModal.vue';
+import BaseModal from '@/components/BaseModal.vue';
 import { useUserStore } from '@/stores/user';
-import Button from '../../../components/Button.vue';
+import Button from '@/components/Button.vue';
 import { reactive } from "vue";
 
 const store = useUserStore();
@@ -39,7 +39,10 @@ const form = reactive(
 );
 
 const getUser = () => store.fetchUser({ userId: searchUser.value });
-const createUser = () => store.fetchCreateUser(form);
+const createUser = () => {
+    store.fetchCreateUser(form);
+    getUser();
+} 
 
 // const modalDelete = (paramId) => {
 //     isOpenDelete.value = true;

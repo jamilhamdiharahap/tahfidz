@@ -1,8 +1,8 @@
 <script setup>
 import { onMounted, computed, ref, reactive } from 'vue';
 import { useScheduleStore } from '@/stores/schedule';
-import BaseModal from '../../../components/BaseModal.vue';
-import Button from '../../../components/Button.vue';
+import BaseModal from '@/components/BaseModal.vue';
+import Button from '@/components/Button.vue';
 
 const store = useScheduleStore();
 
