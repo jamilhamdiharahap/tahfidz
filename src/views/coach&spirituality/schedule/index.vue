@@ -56,7 +56,7 @@ const formatterDate = (date) => {
 }
 
 const openModal = (params) => {
-    store.fetchStudent({ angkatan: "", nameAngkatan: "", status: "true" })
+    store.fetchStudent({ mahasiswaId: "",angkatan: "", nameAngkatan: "", status: "true" })
     isOpen.value = true
     title.value = formatDate(helperDate(params.tanggal))
     form.waktu = helperDate(params.tanggal)

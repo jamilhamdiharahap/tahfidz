@@ -1,6 +1,5 @@
 <script setup>
 import { onMounted, ref, computed, reactive, watch, watchEffect } from 'vue';
-import Table from '@/components/Table.vue';
 import Button from '@/components/Button.vue';
 
 import { useGradeStore } from '@/stores/grade.js';
