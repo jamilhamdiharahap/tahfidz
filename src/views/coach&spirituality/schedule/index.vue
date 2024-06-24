@@ -135,6 +135,7 @@ const nextMonth = () => {
 }
 
 const createSchedule = async () => {
+    form.mahasiswa_id = []
     listItem.value.forEach(item => {
         form.mahasiswa_id.push(item.code)
     })
