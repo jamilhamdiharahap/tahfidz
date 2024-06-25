@@ -17,8 +17,8 @@ const fields = ref([
 ]);
 
 const statusItems = ref([
-    { label: "Active", code: true },
-    { label: "Non Active", code: false },
+    { label: "Aktif", code: true },
+    { label: "Tidak Aktif", code: false },
 ]);
 
 const status = ref("");
@@ -56,6 +56,12 @@ const nameAngkatan = computed({
     }
 });
 
+const isActive = computed({
+    get() {
+        return store.getIsActive;
+    }
+});
+
 const formUpdate = reactive({
     id: "",
     angkatan: "",
@@ -83,9 +89,18 @@ const editGrading = async () => {
     formUpdate.id = getFormUpdate.value;
     formUpdate.angkatan = angkatan.value;
     formUpdate.nama_angkatan = nameAngkatan.value;
+    formUpdate.is_active = isActive.value
     payload.id = "";
     await store.updateGeneration(formUpdate);
     await getGeneration(payload);
+}
+
+const handleStatus = () => {
+    form.is_active = !form.is_active
+}
+
+const handleStatusEdit = () => {
+    store.updateIsActive(!isActive.value)
 }
 
 const closeEditGrading = () => {
@@ -93,8 +108,17 @@ const closeEditGrading = () => {
 }
 
 const createAngkatan = async () => {
-    await store.postGeneration(form);
-    getGeneration();
+    // const txt = document.querySelector("#inputField").value;
+    // console.log(txt)
+    // const txtLen = txt.length;
+    // if (txtLen < 3) {
+    //     document.getElementById("demo").textContent = "Must be atleast 3 characters";
+    //     return;
+    // } else {
+    //     document.getElementById("demo").textContent = "Input OK";
+        await store.postGeneration(form);
+        await getGeneration(payload);
+    // }
 }
 
 watch(status, (value) => {
@@ -151,14 +175,29 @@ onMounted(() => {
                                     {{ item.nama_angkatan }}
                                 </td>
                                 <td class="py-4 leading-6">
-                                    Active
+                                    {{ item.is_active === "true" ? 'Aktif' : 'Tidak Aktif' }}
                                 </td>
                                 <td class="py-4 leading-6">
                                     <button class="px-2" @click="editGradingById(item.id)">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="#E9B824" height="24" viewBox="0 -960 960 960"
-                                            width="24">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="#E9B824" height="24"
+                                            viewBox="0 -960 960 960" width="24">
                                             <path
                                                 d="M200-200h56l345-345-56-56-345 345v56Zm572-403L602-771l113-113 169 169-112 112ZM120-120v-170l424-424 170 170-424 424H120Zm453-453-28-28 56 56-28-28Z" />
+                                        </svg>
+                                    </button>
+                                    <button :disabled="item.user_name == 'pembina'" class="px-2"
+                                        v-if="item.is_active == 'true'">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="#4EBF5F" height="24"
+                                            viewBox="0 -960 960 960" width="24">
+                                            <path
+                                                d="M280-260.001q-91.666 0-155.832-64.14-64.167-64.14-64.167-155.768 0-91.629 64.167-155.859Q188.334-699.999 280-699.999h400q91.666 0 155.832 64.14 64.167 64.14 64.167 155.768 0 91.629-64.167 155.859Q771.666-260.001 680-260.001H280ZM280-320h400q66 0 113-47t47-113q0-66-47-113t-113-47H280q-66 0-113 47t-47 113q0 66 47 113t113 47Zm399.955-50.001q45.814 0 77.929-32.07t32.115-77.884q0-45.814-32.07-77.929t-77.884-32.115q-45.814 0-77.929 32.07t-32.115 77.884q0 45.814 32.07 77.929t77.884 32.115ZM480-480Z" />
+                                        </svg>
+                                    </button>
+                                    <button class="px-2" v-else>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="#C63D2F" height="24"
+                                            viewBox="0 -960 960 960" width="24">
+                                            <path
+                                                d="M280-260.001q-91.666 0-155.832-64.14-64.167-64.14-64.167-155.768 0-91.629 64.167-155.859Q188.334-699.999 280-699.999h400q91.666 0 155.832 64.14 64.167 64.14 64.167 155.768 0 91.629-64.167 155.859Q771.666-260.001 680-260.001H280ZM280-320h400q66 0 113-47t47-113q0-66-47-113t-113-47H280q-66 0-113 47t-47 113q0 66 47 113t113 47Zm-.045-50.001q45.814 0 77.929-32.07t32.115-77.884q0-45.814-32.07-77.929t-77.884-32.115q-45.814 0-77.929 32.07t-32.115 77.884q0 45.814 32.07 77.929t77.884 32.115ZM480-480Z" />
                                         </svg>
                                     </button>
                                 </td>
@@ -187,10 +226,28 @@ onMounted(() => {
                             <label class="block text-xs font-light mb-2">
                                 Angkatan
                             </label>
-                            <input v-model="form.angkatan"
+                            <input v-model="form.angkatan" id="inputField"
                                 class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md px-2"
                                 type="text">
+                            <p id="demo" class="text-xs"></p>
                         </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-light mb-2">
+                            Status
+                        </label>
+                        <button type="button" @click="handleStatus">
+                            <svg v-if="form.is_active" xmlns="http://www.w3.org/2000/svg" fill="#4EBF5F" height="24"
+                                viewBox="0 -960 960 960" width="24">
+                                <path
+                                    d="M280-260.001q-91.666 0-155.832-64.14-64.167-64.14-64.167-155.768 0-91.629 64.167-155.859Q188.334-699.999 280-699.999h400q91.666 0 155.832 64.14 64.167 64.14 64.167 155.768 0 91.629-64.167 155.859Q771.666-260.001 680-260.001H280ZM280-320h400q66 0 113-47t47-113q0-66-47-113t-113-47H280q-66 0-113 47t-47 113q0 66 47 113t113 47Zm399.955-50.001q45.814 0 77.929-32.07t32.115-77.884q0-45.814-32.07-77.929t-77.884-32.115q-45.814 0-77.929 32.07t-32.115 77.884q0 45.814 32.07 77.929t77.884 32.115ZM480-480Z" />
+                            </svg>
+                            <svg v-else xmlns="http://www.w3.org/2000/svg" fill="#C63D2F" height="24"
+                                viewBox="0 -960 960 960" width="24">
+                                <path
+                                    d="M280-260.001q-91.666 0-155.832-64.14-64.167-64.14-64.167-155.768 0-91.629 64.167-155.859Q188.334-699.999 280-699.999h400q91.666 0 155.832 64.14 64.167 64.14 64.167 155.768 0 91.629-64.167 155.859Q771.666-260.001 680-260.001H280ZM280-320h400q66 0 113-47t47-113q0-66-47-113t-113-47H280q-66 0-113 47t-47 113q0 66 47 113t113 47Zm-.045-50.001q45.814 0 77.929-32.07t32.115-77.884q0-45.814-32.07-77.929t-77.884-32.115q-45.814 0-77.929 32.07t-32.115 77.884q0 45.814 32.07 77.929t77.884 32.115ZM480-480Z" />
+                            </svg>
+                        </button>
                     </div>
                     <div class="relative h-12 w-auto min-w-[200px]">
                         <div>
@@ -215,6 +272,31 @@ onMounted(() => {
                         {{ getIsLoading ? '' : 'New' }}
                     </span>
                 </Button>
+                <div class="text-xs font-light">
+                    <h1 class="mb-1 italic opacity-50">Note:</h1>
+                    <ul>
+                        <li class="flex gap-x-2 items-center">
+                            <span>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="#4EBF5F" height="10px"
+                                    viewBox="0 -960 960 960" width="10px">
+                                    <path
+                                        d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z" />
+                                </svg>
+                            </span>
+                            <span>Aktif</span>
+                        </li>
+                        <li class="flex gap-x-2 items-center">
+                            <span>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="#C63D2F" height="10px"
+                                    viewBox="0 -960 960 960" width="10px">
+                                    <path
+                                        d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z" />
+                                </svg>
+                            </span>
+                            <span>Tidak Aktif</span>
+                        </li>
+                    </ul>
+                </div>
             </form>
         </BaseModal>
         <BaseModal :open="getIsOpenUpdate" @close="closeEditGrading" :width="'w-96'">
@@ -240,6 +322,23 @@ onMounted(() => {
                                 type="text" />
                         </div>
                     </div>
+                    <div>
+                        <label class="block text-xs font-light mb-2">
+                            Status
+                        </label>
+                        <button type="button" @click="handleStatusEdit">
+                            <svg v-if="isActive" xmlns="http://www.w3.org/2000/svg" fill="#4EBF5F" height="24"
+                                viewBox="0 -960 960 960" width="24">
+                                <path
+                                    d="M280-260.001q-91.666 0-155.832-64.14-64.167-64.14-64.167-155.768 0-91.629 64.167-155.859Q188.334-699.999 280-699.999h400q91.666 0 155.832 64.14 64.167 64.14 64.167 155.768 0 91.629-64.167 155.859Q771.666-260.001 680-260.001H280ZM280-320h400q66 0 113-47t47-113q0-66-47-113t-113-47H280q-66 0-113 47t-47 113q0 66 47 113t113 47Zm399.955-50.001q45.814 0 77.929-32.07t32.115-77.884q0-45.814-32.07-77.929t-77.884-32.115q-45.814 0-77.929 32.07t-32.115 77.884q0 45.814 32.07 77.929t77.884 32.115ZM480-480Z" />
+                            </svg>
+                            <svg v-else xmlns="http://www.w3.org/2000/svg" fill="#C63D2F" height="24"
+                                viewBox="0 -960 960 960" width="24">
+                                <path
+                                    d="M280-260.001q-91.666 0-155.832-64.14-64.167-64.14-64.167-155.768 0-91.629 64.167-155.859Q188.334-699.999 280-699.999h400q91.666 0 155.832 64.14 64.167 64.14 64.167 155.768 0 91.629-64.167 155.859Q771.666-260.001 680-260.001H280ZM280-320h400q66 0 113-47t47-113q0-66-47-113t-113-47H280q-66 0-113 47t-47 113q0 66 47 113t113 47Zm-.045-50.001q45.814 0 77.929-32.07t32.115-77.884q0-45.814-32.07-77.929t-77.884-32.115q-45.814 0-77.929 32.07t-32.115 77.884q0 45.814 32.07 77.929t77.884 32.115ZM480-480Z" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
                 <Button class="m-auto ml-auto">
                     <span>
@@ -253,6 +352,31 @@ onMounted(() => {
                         {{ getIsLoading ? '' : 'Save' }}
                     </span>
                 </Button>
+                <div class="text-xs font-light">
+                    <h1 class="mb-1 italic opacity-50">Note:</h1>
+                    <ul>
+                        <li class="flex gap-x-2 items-center">
+                            <span>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="#4EBF5F" height="10px"
+                                    viewBox="0 -960 960 960" width="10px">
+                                    <path
+                                        d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z" />
+                                </svg>
+                            </span>
+                            <span>Aktif</span>
+                        </li>
+                        <li class="flex gap-x-2 items-center">
+                            <span>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="#C63D2F" height="10px"
+                                    viewBox="0 -960 960 960" width="10px">
+                                    <path
+                                        d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z" />
+                                </svg>
+                            </span>
+                            <span>Tidak Aktif</span>
+                        </li>
+                    </ul>
+                </div>
             </form>
         </BaseModal>
     </div>

@@ -23,7 +23,7 @@ const formUpdate = reactive(
     }
 );
 
-const statusItems = ref([{ label: "Active", code: true }, { label: "Non Active", code: false }]);
+const statusItems = ref([{ label: "Aktif", code: true }, { label: "Tidak Aktif", code: false }]);
 const payload = reactive({ nilaiId: "", status: "" })
 const nilai = ref("");
 const status = ref("");
@@ -112,11 +112,8 @@ onMounted(() => {
                                 <td class="py-4 leading-6">
                                     {{ item.nama_penilaian }}
                                 </td>
-                                <td class="py-4 leading-6" v-if="item.is_active">
-                                    Active
-                                </td>
-                                <td class="py-4 leading-6" v-else>
-                                    Non Active
+                                <td class="py-4 leading-6">
+                                    {{ item.is_active === "true" ? 'Aktif' : 'Tidak Aktif' }}
                                 </td>
                                 <td class="py-4 leading-6">
                                     <button class="px-2" v-if="item.is_active == 'true'" @click="updateStatus(item)">
@@ -168,11 +165,13 @@ onMounted(() => {
             </div>
             <Button type="submit" class="m-auto ml-auto">
                 <span>
-                    <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16" fill="#FFFFFF">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16"
+                        fill="#FFFFFF">
                         <path d="M460-460H240v-40h220v-220h40v220h220v40H500v220h-40v-220Z" />
                     </svg>
                 </span>
-                <span :class="getIsLoading ? 'h-6 w-6 block rounded-full border-4 border-t-[#4EBF5F] animate-spin' : ''">
+                <span
+                    :class="getIsLoading ? 'h-6 w-6 block rounded-full border-4 border-t-[#4EBF5F] animate-spin' : ''">
                     {{ getIsLoading ? '' : 'New' }}
                 </span>
             </Button>

@@ -179,12 +179,12 @@ onMounted(() => {
                 </svg>
             </button>
         </div>
-        <div class="grid grid-cols-7">
+        <div class="grid 2xl:grid-cols-8 xl:grid-cols-8 md:grid-cols-5 lg:grid-cols-7 grid-cols-4">
             <template v-for="day in ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']">
                 <div class="text-center h-10 text-sm leading-5">{{ day }}</div>
             </template>
             <div v-for="(item, index) in getItems" :key="index" :class="getCellClasses(item)">
-                <div class="flex flex-col h-40 xl:w-40 lg:w-30 md:w-30 sm:w-full w-10 mx-auto">
+                <div class="flex flex-col xl:h-40 md:h-20 xl:w-40 lg:w-30 md:w-30 sm:w-full w-64">
                     <div class="top h-5 w-full flex justify-between">
                         <span :class="getTextClasses(item)">{{ item.tanggal }}</span>
                         <button v-if="item.flag !== 'DISABLE'" class="bg-[#4EBF5F] bg-base px-4 rounded-l-xl"
@@ -196,7 +196,7 @@ onMounted(() => {
                             </svg>
                         </button>
                     </div>
-                    <div class="bottom flex-grow h-30 py-2 w-full cursor-pointer">
+                    <div class="bottom flex-grow xl:h-30 lg:30 md:30 h-20 py-2 w-full cursor-pointer">
                         <div class="overflow-y-hidden block space-y-1">
                             <div class="relative" v-for="(student, index) in item.listMahasiswa">
                                 <p class="text-xs font-light leading-3 px-0.5 rounded-md">{{ student.nama_mahasiswa }}</p>

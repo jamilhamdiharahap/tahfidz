@@ -15,6 +15,6 @@ export async function postAngkatan(payload) {
         const data = await instance.post(`/mahasiswa/updateAngkatan`, payload);
         return data;
     } catch (err) {
-        return err;
+        return err
     }
 }
