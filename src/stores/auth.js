@@ -37,6 +37,7 @@ export const useAuthStore = defineStore('auth', {
         } else if (data.data.data.role_id == "2") {
           router.push("/spiritual");
         } else if (data.data.data.role_id == "3") {
+          localStorage.setItem('mahasiswa', JSON.stringify([data.data.data.mahasiswa_id, data.data.data.nama_mahasiswa, data.data.data.angkatan, data.data.data.nama_angkatan]))
           router.push("/students");
         } else {
           router.push({ name: "Login" });

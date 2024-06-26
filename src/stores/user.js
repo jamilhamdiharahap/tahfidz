@@ -52,7 +52,7 @@ export const useUserStore = defineStore('user', {
 
         async fetchDeleteUser(username) {
             this.loading = true;
-            const { data, status, message } = await deleteUser(username);
+            const { status, message } = await deleteUser(username);
             if (status == 200) {
                 setTimeout(() => {
                     this.loading = false;

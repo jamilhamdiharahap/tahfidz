@@ -13,29 +13,33 @@ const generationStore = useStudentStore();
 
 // data
 const generation = ref("");
-const student = ref("");
-const payloadStudent = reactive({ angkatan: "", nameAngkatan: "", status: "" });
+// const student = ref("");
+const payloadStudent = reactive({ id: "", angkatan: "", nameAngkatan: "", status: "" });
 // end data
 
 
 // computed
-const getGenerationFilter = computed(() => generationStore.getGenerationFilter);
-const getStudentItems = computed(() => generationStore.getStudentFilter);
+// const getGenerationFilter = computed(() => generationStore.getGenerationFilter);
+// const getStudentItems = computed(() => generationStore.getStudentFilter);
 const getItemMhs = computed(() => store.getItemMhs);
+const getMhs = computed(() =>  {
+    let data = localStorage.getItem('mahasiswa')
+    return JSON.parse(data)
+})
 // end computed
 
 
 // methods
-const getGeneration = async () => {
-    generationStore.fetchGeneration(payloadStudent)
-}
+// const getGeneration = async () => {
+//     generationStore.fetchGeneration(payloadStudent)
+// }
 
 const getStudent = async () => {
     generationStore.fetchStudent(payloadStudent)
 }
 
 const seeGrade = async () => {
-    await store.fetchGradeMhs({ surahId: "", tanggal: "", mahasiswaId: student.value?.code })
+    await store.fetchGradeMhs({ surahId: "", tanggal: "", mahasiswaId: getMhs.value[0] })
 }
 
 const isDropdownOpen = ref(Array(getItemMhs.length).fill(false));
@@ -78,8 +82,10 @@ watch(generation, (value) => {
 
 // mounted
 onMounted(async () => {
-    await getStudent();
-    await getGeneration();
+    store.updateItemsMhs([])
+    seeGrade()
+    // await getStudent();
+    // await getGeneration();
 })
 // end mounted
 </script>
@@ -90,12 +96,12 @@ onMounted(async () => {
             <div class="flex mb-4 items-center gap-4 flex-wrap">
                 <div class="relative min-w-[16vw]">
                     <label for="" class="text-xs leading-3 font-light">Angkatan</label>
-                    <v-select :options="getGenerationFilter" value="code" label="label" v-model="generation"
+                    <v-select disabled value="code" label="label" :clearable="false" v-model="getMhs[3]"
                         class="rounded-md text-xs"></v-select>
                 </div>
                 <div class="relative min-w-[16vw]">
                     <label for="" class="text-xs leading-3 font-light">Mahasiswa</label>
-                    <v-select :options="getStudentItems" value="code" label="label" v-model="student"
+                    <v-select disabled value="code" label="label" :clearable="false" v-model="getMhs[1]"
                         class="rounded-md text-xs"></v-select>
                 </div>
                 <Button class="mt-auto" @click="seeGrade" :disabled="false">
@@ -127,7 +133,8 @@ onMounted(async () => {
                         class="md:flex gap-2 cursor-pointer my-1 hover:bg-gray-200 rounded border-b-gray-200 border-b-[1px] hover:text-[#252525]"
                         v-for="(grade, index) in getItemMhs" :key="index" @click="toggleDropdown(index)">
                         <div class="w-8 h-10 text-center py-1">
-                            <p :class="grade.average == '' ? 'text-red-400' : 'text-[#4EBF5F]'" class="text-3xl p-0">&bull;
+                            <p :class="grade.average == '' ? 'text-red-400' : 'text-[#4EBF5F]'" class="text-3xl p-0">
+                                &bull;
                             </p>
                         </div>
                         <div class="w-4/5 h-10 py-3 px-1">
@@ -135,8 +142,8 @@ onMounted(async () => {
                         </div>
                         <div class="overflow-x-auto min-w-[40px]">
                             <div class="w-1/5 h-10 text-right p-3 relative">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="#FFCC70" height="24" viewBox="0 -960 960 960"
-                                    width="24">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="#FFCC70" height="24"
+                                    viewBox="0 -960 960 960" width="24">
                                     <path
                                         d="m354-247 126-76 126 77-33-144 111-96-146-13-58-136-58 135-146 13 111 97-33 143ZM233-80l65-281L80-550l288-25 112-265 112 265 288 25-218 189 65 281-247-149L233-80Zm247-350Z" />
                                 </svg>

@@ -34,11 +34,24 @@ export const useGradeStore = defineStore('grade', {
             }
         },
 
+        async fetchUpdateStatusGrade(payload) {
+            this.loading = true;
+            const res = await updateGrade(payload);
+            if (res.response?.data?.status === 400) {
+                this.updateModal(false);
+            } else {
+                this.loading = false;
+                this.updateModal(false);
+            }
+        },
+
         updateItems(results) {
+            this.items = []
             this.items = results.data;
         },
 
         updateItemsMhs(results) {
+            this.nilaiItems = []
             this.nilaiItems = results.data;
         },
 

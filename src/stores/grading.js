@@ -41,8 +41,8 @@ export const useGradingStore = defineStore('grading', {
         },
 
         updateItemFilterSurah(results, index, limit) {
+            this.surahOption = []
             if (Array.isArray(results.data)) {
-                this.surahOption = []
                 let alKahfi = {
                     surah: "0",
                     nama_surah: "Al-Kahfi",

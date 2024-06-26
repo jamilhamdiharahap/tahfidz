@@ -53,7 +53,7 @@ const updateStatus = async (params) => {
     formUpdate.nama_penilaian = params.nama_penilaian;
     formUpdate.is_active = params.is_active == 'true' ? 'false' : 'true';
 
-    await store.fetchUpdateGrade(formUpdate);
+    await store.fetchUpdateStatusGrade(formUpdate);
     getGrade();
 }
 

@@ -18,6 +18,24 @@ const getIsOpen = computed(() => store.getIsOpen);
 const isOpenGrade = ref(false);
 const gradeItems = ref("");
 
+// mahasiswa
+const mahasiswa = ref("");
+// surah
+const searchSurah = ref("");
+// const surah = ref("");
+const seq = ref("");
+// const ayatAwalan = ref(0);
+const keterangan = ref("");
+const ayatAkhir = ref(0);
+// const mahasiswaId = ref("");
+const sheduleDate = ref("");
+const limit = ref(1);
+// const nilai = ref({});
+// const status = ref("");
+const nameSurah = ref("")
+const viewGrade = ref(true);
+const resultItems = ref([])
+
 const detailItems = computed(() => {
     let items = []
     getSurahFilter.value.map((item, index) => {
@@ -45,7 +63,7 @@ const input = reactive({
 
 const inputBindingStatus = computed(() => {
     let bindItems = {};
-    getSurahFilter.value.forEach((item, index) => {
+    getSurahFilter.value.forEach((item) => {
         bindItems[`input${item.nilai_id}`] = "";
     });
     return bindItems;
@@ -54,25 +72,6 @@ const inputBindingStatus = computed(() => {
 const inputStatus = reactive({
     inputBindingStatus,
 });
-
-
-// mahasiswa
-const mahasiswa = ref("");
-
-// surah
-const searchSurah = ref("");
-const surah = ref("");
-const seq = ref("");
-const ayatAwalan = ref(0);
-const keterangan = ref("");
-const ayatAkhir = ref(0);
-const mahasiswaId = ref("");
-const sheduleDate = ref("");
-const limit = ref(1);
-const nilai = ref({});
-const status = ref("");
-const viewGrade = ref(true);
-const resultItems = ref([])
 
 const fields = ref([
     "No",
@@ -104,6 +103,7 @@ const addSurah = () => {
 const gradeStudent = (params) => {
     ayatAkhir.value = params.jumlah_ayat
     seq.value = params.seq
+    nameSurah.value = params.nama_surah
     store.updateIsOpen(true)
 }
 
@@ -162,6 +162,7 @@ const saveTemporarily = () => {
         penilaian_id: "",
         mahasiswa_id: mahasiswa.value.code,
         waktu: sheduleDate.value,
+        nama_surah: nameSurah.value,
         surah_seq: seq.value,
         juz: "",
         surah_awalan: 1,
@@ -172,12 +173,19 @@ const saveTemporarily = () => {
     };
 
     const existingItemIndex = resultItems.value.findIndex(item => item.surah_seq === newPayload.surah_seq);
-    console.log(existingItemIndex)
+
     if (existingItemIndex !== -1) {
         resultItems.value[existingItemIndex] = newPayload;
     } else {
         resultItems.value.push(newPayload);
     }
+
+    getSurahFilter.value.forEach(item => {
+        if (item.nama_surah == newPayload.nama_surah) {
+            item.keterangan = keterangan.value
+            item.nilai = [...nilai]
+        }
+    })
 
     closeModal();
     clearInputBinding();
@@ -202,7 +210,7 @@ const generationStore = useStudentStore();
 // data
 const generation = ref("");
 const student = ref("");
-const payloadStudent = reactive({ id: "", angkatan: "", nameAngkatan: "", status: "" });
+const payloadStudent = reactive({ id: "", angkatan: "", mahasiswaId: "", nameAngkatan: "", status: "" });
 // end data
 
 
@@ -225,8 +233,10 @@ const getStudentGrade = async () => {
 }
 
 const viewsGrading = async () => {
+    storeMhs.updateItemsMhs([])
     viewGrade.value = !viewGrade.value
     if (viewGrade.value == false) {
+        payloadStudent.flag = true;
         await getStudentGrade();
         await getGeneration();
     }
@@ -235,7 +245,6 @@ const viewsGrading = async () => {
 const viewGradeBySurah = (params) => {
     isOpenGrade.value = true;
     gradeItems.value = params;
-    console.log(gradeItems.value)
 }
 
 
@@ -257,6 +266,13 @@ const animateHeigth = () => {
         currentHeight.value += 5;
     }
 }
+
+const handleAvg = (items) => {
+    const sum = items.reduce((acc, item) => acc + parseInt(item.nilai), 0)
+    const avg = sum / items.length
+    return Math.round(avg)
+}
+
 
 watchEffect(() => {
     const timer = setInterval(animateHeigth, 2000);
@@ -284,7 +300,7 @@ watch(generation, (value) => {
 // mounted
 
 // onMounted(() => {
-//     getSurah();
+//     storeMhs.updateItemsMhs([])
 // })
 </script>
 
@@ -368,16 +384,16 @@ watch(generation, (value) => {
                                     {{ item.nama_surah }}
                                 </td>
                                 <td class="py-4 leading-6 w-[10vw]">
-                                <td class="flex justify-center gap-4">
-                                    <input :disabled="true" type="text" value="40" class="w-14 px-2" />
-                                    <button @click="gradeStudent(item)">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="#FFCC70" height="24"
-                                            viewBox="0 -960 960 960" width="24">
-                                            <path
-                                                d="m354-247 126-76 126 77-33-144 111-96-146-13-58-136-58 135-146 13 111 97-33 143ZM233-80l65-281L80-550l288-25 112-265 112 265 288 25-218 189 65 281-247-149L233-80Zm247-350Z" />
-                                        </svg>
-                                    </button>
-                                </td>
+                                    <td class="flex justify-center gap-4">
+                                        <input :disabled="true" type="text" :value="item.nilai ? handleAvg(item.nilai) : 0" class="w-14 px-2" />
+                                        <button @click="gradeStudent(item)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="#FFCC70" height="24"
+                                                viewBox="0 -960 960 960" width="24">
+                                                <path
+                                                    d="m354-247 126-76 126 77-33-144 111-96-146-13-58-136-58 135-146 13 111 97-33 143ZM233-80l65-281L80-550l288-25 112-265 112 265 288 25-218 189 65 281-247-149L233-80Zm247-350Z" />
+                                            </svg>
+                                        </button>
+                                    </td>
                                 </td>
                                 <td>
                                     <form class="space-x-3 flex flex-wrap justify-center">
@@ -399,6 +415,7 @@ watch(generation, (value) => {
                                     </label>
                                 </div> -->
                                 </td>
+                                <td>{{ item.keterangan }}</td>
                             </tr>
                         </tbody>
                     </table>
