@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { getAngkatan, postAngkatan } from '../service/generationService'
+import { updateStatusAngkatan, getAngkatan, postAngkatan } from '../service/generationService'
 import { swallAlert } from '../plugins/sweetalert2';
 export const useGenerationStore = defineStore('generation', {
     state: () => ({
@@ -55,6 +55,24 @@ export const useGenerationStore = defineStore('generation', {
                 this.angkatan = "";
                 this.nameAngkatan = "";
                 swallAlert('success', 'success', { btnOk: 'Ok', message: res.data.message, title: res.data.message })
+            }
+        },
+
+        async fetchUpdateStatusAngkatan(payload) {
+            this.loading = true;
+            const { status, message } = await updateStatusAngkatan(payload);
+            if (status == 200) {
+                setTimeout(() => {
+                    this.loading = false;
+                    this.message = message;
+                    this.updateModal(false)
+                }, 1000);
+            } else {
+                setTimeout(() => {
+                    this.loading = false;
+                    this.message = message;
+                    this.updateModal(false)
+                }, 1000);
             }
         },
 

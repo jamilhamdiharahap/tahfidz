@@ -18,3 +18,12 @@ export async function postAngkatan(payload) {
         return err
     }
 }
+
+export async function updateStatusAngkatan(payload) {
+    try {
+        const data = await instance.post(`/mahasiswa/updateAngkatan`, payload);
+        return data;
+    } catch (err) {
+        return err;
+    }
+}

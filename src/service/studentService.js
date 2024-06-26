@@ -18,3 +18,12 @@ export async function postMahasiswa(payload) {
         return err;
     }
 }
+
+export async function updateStatusMahasiswa(payload) {
+    try {
+        const data = await instance.post(`/mahasiswa/updateMahasiswa`, payload);
+        return data;
+    } catch (err) {
+        return err;
+    }
+}

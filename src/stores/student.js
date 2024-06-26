@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { getMahasiswa, postMahasiswa } from '../service/studentService.js';
+import { getMahasiswa, postMahasiswa, updateStatusMahasiswa } from '../service/studentService.js';
 import { getAngkatan } from '../service/generationService.js';
 
 export const useStudentStore = defineStore('student', {
@@ -57,6 +57,24 @@ export const useStudentStore = defineStore('student', {
                 results.data.forEach(item => this.student_option.push({ label: item.nama_mahasiswa, code: item.mahasiswa_id }));
             } else {
                 console.error('Invalid input');
+            }
+        },
+
+        async fetchUpdateStatusMahasiswa(payload) {
+            this.loading = true;
+            const { status, message } = await updateStatusMahasiswa(payload);
+            if (status == 200) {
+                setTimeout(() => {
+                    this.loading = false;
+                    this.message = message;
+                    this.updateModal(false)
+                }, 1000);
+            } else {
+                setTimeout(() => {
+                    this.loading = false;
+                    this.message = message;
+                    this.updateModal(false)
+                }, 1000);
             }
         },
 

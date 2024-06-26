@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { getShedule, updateGrading } from '../service/gradingService.js';
 import { getSurah } from '../service/surahService.js';
+import { swallAlert } from '../plugins/sweetalert2.js';
 
 export const useGradingStore = defineStore('grading', {
     state: () => ({
@@ -12,9 +13,12 @@ export const useGradingStore = defineStore('grading', {
 
     actions: {
         async fetchGrading(payload) {
-            console.log(payload)
-            const { data } = await updateGrading(payload);
-            console.log(data);
+            const res = await updateGrading(payload);
+            if (res.response?.data?.status === 400) {
+                swallAlert('danger', 'error', { btnOk: 'Ok', message: res.response.data.message, title: 'Error' })
+            } else {
+                swallAlert('success', 'success', { btnOk: 'Ok', message: res.data.message, title: res.data.message })
+            }
         },
 
         async fetchStudent(params) {

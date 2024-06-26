@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { getNilaiMaster, getNilai, updateGrade } from '../service/gradeService.js';
+import { swallAlert } from '../plugins/sweetalert2.js';
 
 export const useGradeStore = defineStore('grade', {
     state: () => ({
@@ -22,17 +23,14 @@ export const useGradeStore = defineStore('grade', {
 
         async fetchUpdateGrade(payload) {
             this.loading = true;
-            const { data, status } = await updateGrade(payload);
-            if (status == 200) {
-                setTimeout(() => {
-                    this.loading = false;
-                    this.updateModal(false);
-                }, 1000);
+            const res = await updateGrade(payload);
+            if (res.response?.data?.status === 400) {
+                this.updateModal(false);
+                swallAlert('danger', 'error', { btnOk: 'Ok', message: res.response.data.message, title: 'Error' })
             } else {
-                setTimeout(() => {
-                    this.loading = false;
-                    this.updateModal(false);
-                }, 1000);
+                this.loading = false;
+                this.updateModal(false);
+                swallAlert('success', 'success', { btnOk: 'Ok', message: res.data.message, title: res.data.message })
             }
         },
 
