@@ -14,7 +14,7 @@ const generationStore = useStudentStore();
 // data
 const generation = ref("");
 // const student = ref("");
-const payloadStudent = reactive({ id: "", angkatan: "", nameAngkatan: "", status: "" });
+const payloadStudent = reactive({ id: "", angkatan: "", nameAngkatan: "", status: "", jadwal: '' });
 // end data
 
 

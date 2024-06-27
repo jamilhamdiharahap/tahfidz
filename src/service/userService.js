@@ -18,6 +18,14 @@ export async function postUser(payload) {
         return err;
     }
 }
+export async function putUser(payload) {
+    try {
+        const data = await instance.post(`/user/update`, payload);
+        return data;
+    } catch (err) {
+        return err;
+    }
+}
 
 export async function deleteUser(username) {
     try {

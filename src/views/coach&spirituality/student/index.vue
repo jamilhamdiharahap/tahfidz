@@ -38,7 +38,7 @@ const form = reactive({
 });
 
 const payload = reactive({ id: "", angkatan: "", nameAngkatan: "", status: "" });
-const payloadStudent = reactive({ mahasiswaId: "", angkatan: "", nameAngkatan: "", status: "", flag: true });
+const payloadStudent = reactive({ mahasiswaId: "", angkatan: "", nameAngkatan: "", status: "", flag: true, jadwal: "" });
 
 const updateStudent = reactive({
     payload: computed(() => store.payloadUpdate)

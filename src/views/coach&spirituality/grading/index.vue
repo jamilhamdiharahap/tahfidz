@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, onMounted, computed, ref, watch, watchEffect } from 'vue';
+import { reactive, computed, ref, watch, watchEffect } from 'vue';
 import { useGradingStore } from "@/stores/grading.js";
 import { useStudentStore } from "@/stores/student.js";
 import { useGradeStore } from '@/stores/grade.js';
@@ -11,30 +11,33 @@ import IconNotFound from '@/components/icons/iconNotFound.vue';
 const store = useGradingStore();
 const storeGrade = useGradeStore();
 
-const getItemGrade = computed(() => storeGrade.getItems)
-const getStudentFilter = computed(() => store.getStudentFilter);
-const getSurahFilter = computed(() => store.getSurahFilter);
-const getIsOpen = computed(() => store.getIsOpen);
 const isOpenGrade = ref(false);
 const gradeItems = ref("");
-
-// mahasiswa
 const mahasiswa = ref("");
-// surah
 const searchSurah = ref("");
-// const surah = ref("");
 const seq = ref("");
-// const ayatAwalan = ref(0);
 const keterangan = ref("");
 const ayatAkhir = ref(0);
-// const mahasiswaId = ref("");
 const sheduleDate = ref("");
 const limit = ref(1);
-// const nilai = ref({});
-// const status = ref("");
 const nameSurah = ref("")
 const viewGrade = ref(true);
 const resultItems = ref([])
+const storeMhs = useGradeStore();
+const generationStore = useStudentStore();
+const generation = ref("");
+const student = ref("");
+const payloadStudent = reactive({ id: "", angkatan: "", mahasiswaId: "", nameAngkatan: "", status: "" });
+const form = reactive([])
+const fields = ref([
+    "No",
+    "Surah",
+    "NILAI",
+    "Keterangan",
+    "Catatan",
+]);
+
+
 
 const detailItems = computed(() => {
     let items = []
@@ -69,19 +72,18 @@ const inputBindingStatus = computed(() => {
     return bindItems;
 });
 
+
 const inputStatus = reactive({
     inputBindingStatus,
 });
 
-const fields = ref([
-    "No",
-    "Surah",
-    "NILAI",
-    "Keterangan",
-    "Catatan",
-]);
-
-const form = reactive([])
+const getItemGrade = computed(() => storeGrade.getItems)
+const getStudentFilter = computed(() => store.getStudentFilter);
+const getSurahFilter = computed(() => store.getSurahFilter);
+const getIsOpen = computed(() => store.getIsOpen);
+const getGenerationFilter = computed(() => generationStore.getGenerationFilter);
+const getStudentItems = computed(() => generationStore.getStudentFilter);
+const getItemMhs = computed(() => storeMhs.getItemMhs);
 
 const getGrade = async () => {
     await storeGrade.fetchGrade({ nilaiId: "", status: "true" })
@@ -138,6 +140,10 @@ const createGreading = async () => {
     });
 
     await store.fetchGrading(result);
+    resultItems.value = []
+    mahasiswa.value = ''
+    await getStudent(sheduleDate.value)
+    store.clearGrading()
 }
 
 const clearInputBinding = () => {
@@ -190,39 +196,6 @@ const saveTemporarily = () => {
     closeModal();
     clearInputBinding();
 }
-
-watch(sheduleDate, (value) => {
-    getStudent(value);
-})
-
-watch(mahasiswa, (value) => {
-    getSurah()
-    getGrade()
-})
-
-
-// store
-const storeMhs = useGradeStore();
-const generationStore = useStudentStore();
-// end store
-
-
-// data
-const generation = ref("");
-const student = ref("");
-const payloadStudent = reactive({ id: "", angkatan: "", mahasiswaId: "", nameAngkatan: "", status: "" });
-// end data
-
-
-// computed
-const getGenerationFilter = computed(() => generationStore.getGenerationFilter);
-const getStudentItems = computed(() => generationStore.getStudentFilter);
-const getItemMhs = computed(() => storeMhs.getItemMhs);
-// end computed
-
-
-// methods
-
 
 const getGeneration = async () => {
     generationStore.fetchGeneration(payloadStudent)
@@ -281,10 +254,14 @@ watchEffect(() => {
     }
 });
 
-// end methods
+watch(sheduleDate, (value) => {
+    getStudent(value);
+})
 
-
-// watch
+watch(mahasiswa, (value) => {
+    getSurah()
+    getGrade()
+})
 watch(generation, (value) => {
     if (value == null) {
         payloadStudent.angkatan = "";
@@ -294,10 +271,6 @@ watch(generation, (value) => {
         getStudentGrade();
     }
 });
-// end watch
-
-
-// mounted
 
 // onMounted(() => {
 //     storeMhs.updateItemsMhs([])
@@ -314,12 +287,15 @@ watch(generation, (value) => {
             <div v-if="viewGrade" class="grid md:grid-cols-4 mb-4 items-center py-4 gap-2 md:gap-4">
                 <div class="space-x-4 mt-auto col-span-2">
                     <button class="bg-[#BB2525] rounded-full bg-base" @click="removeSurah">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="#FFF" height="24" viewBox="0 -960 960 960" width="24">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="#FFF" height="24" viewBox="0 -960 960 960"
+                            width="24">
                             <path d="M200-440v-80h560v80H200Z" />
                         </svg>
                     </button>
-                    <button class="bg-[#557A46] rounded-full bg-base" :disabled="detailItems.length <= 0" @click="addSurah">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="#FFF" height="24" viewBox="0 -960 960 960" width="24">
+                    <button class="bg-[#557A46] rounded-full bg-base" :disabled="detailItems.length <= 0"
+                        @click="addSurah">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="#FFF" height="24" viewBox="0 -960 960 960"
+                            width="24">
                             <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
                         </svg>
                     </button>
@@ -384,16 +360,17 @@ watch(generation, (value) => {
                                     {{ item.nama_surah }}
                                 </td>
                                 <td class="py-4 leading-6 w-[10vw]">
-                                    <td class="flex justify-center gap-4">
-                                        <input :disabled="true" type="text" :value="item.nilai ? handleAvg(item.nilai) : 0" class="w-14 px-2" />
-                                        <button @click="gradeStudent(item)">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="#FFCC70" height="24"
-                                                viewBox="0 -960 960 960" width="24">
-                                                <path
-                                                    d="m354-247 126-76 126 77-33-144 111-96-146-13-58-136-58 135-146 13 111 97-33 143ZM233-80l65-281L80-550l288-25 112-265 112 265 288 25-218 189 65 281-247-149L233-80Zm247-350Z" />
-                                            </svg>
-                                        </button>
-                                    </td>
+                                <td class="flex justify-center gap-4">
+                                    <input :disabled="true" type="text" :value="item.nilai ? handleAvg(item.nilai) : 0"
+                                        class="w-14 px-2" />
+                                    <button @click="gradeStudent(item)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="#FFCC70" height="24"
+                                            viewBox="0 -960 960 960" width="24">
+                                            <path
+                                                d="m354-247 126-76 126 77-33-144 111-96-146-13-58-136-58 135-146 13 111 97-33 143ZM233-80l65-281L80-550l288-25 112-265 112 265 288 25-218 189 65 281-247-149L233-80Zm247-350Z" />
+                                        </svg>
+                                    </button>
+                                </td>
                                 </td>
                                 <td>
                                     <form class="space-x-3 flex flex-wrap justify-center">
@@ -452,11 +429,13 @@ watch(generation, (value) => {
                         </div>
                     </div>
                     <div class="relative overflow-x-auto h-auto max-h-full hover:max-h-screen">
-                        <div :class="{ ['h-' + currentHeight]: isDropdownOpen[index], '': !isDropdownOpen[index] }"
+                        <!-- :class="{ ['h-' + currentHeight]: isDropdownOpen[index], '': !isDropdownOpen[index] }" -->
+                        <div v-if="getItemMhs && getItemMhs.length > 0"
                             class="md:flex gap-2 cursor-pointer my-1 hover:bg-gray-200 rounded border-b-gray-200 border-b-[1px] hover:text-[#252525]"
                             v-for="(grade, index) in getItemMhs" :key="index" @click="toggleDropdown(index)">
                             <div class="w-8 h-10 text-center py-1">
-                                <p :class="grade.average == '' ? 'text-red-400' : 'text-[#4EBF5F]'" class="text-3xl p-0">
+                                <p :class="grade.average == '' ? 'text-red-400' : 'text-[#4EBF5F]'"
+                                    class="text-3xl p-0">
                                     &bull;
                                 </p>
                             </div>
@@ -480,6 +459,11 @@ watch(generation, (value) => {
                             </div>
                             <div class="w-1/5 h-10 text-right p-3 relative">
                                 <p class="text-xs text-grey-dark">{{ grade.average }}</p>
+                            </div>
+                        </div>
+                        <div v-else>
+                            <div class="flex justify-center items-center">
+                                <IconNotFound />
                             </div>
                         </div>
                     </div>
@@ -518,7 +502,8 @@ watch(generation, (value) => {
                         <p>Nama : {{ gradeItems.nama_mahasiswa }}</p>
                     </div>
                     <div class="text-xs">
-                        <p>Surah : {{ gradeItems.nama_surah }} ({{ gradeItems.surah == "0" ? 1 :  gradeItems.surah }})</p>
+                        <p>Surah : {{ gradeItems.nama_surah }} ({{ gradeItems.surah == "0" ? 1 : gradeItems.surah }})
+                        </p>
                     </div>
                     <div class="text-xs">
                         <p>Nama Surah : {{ gradeItems.nama_surah }}</p>

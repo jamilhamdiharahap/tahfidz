@@ -56,7 +56,13 @@ const formatterDate = (date) => {
 }
 
 const openModal = (params) => {
-    store.fetchStudent({ mahasiswaId: "",angkatan: "", nameAngkatan: "", status: "true" })
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(params.tanggal).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+
+    store.fetchStudent({ mahasiswaId: "",angkatan: "", nameAngkatan: "", status: "true", jadwal: formattedDate })
     isOpen.value = true
     title.value = formatDate(helperDate(params.tanggal))
     form.waktu = helperDate(params.tanggal)
@@ -179,7 +185,7 @@ onMounted(() => {
                 </svg>
             </button>
         </div>
-        <div class="grid 2xl:grid-cols-8 xl:grid-cols-8 md:grid-cols-5 lg:grid-cols-7 grid-cols-4">
+        <div class="grid 2xl:grid-cols-7 xl:grid-cols-8 md:grid-cols-5 lg:grid-cols-7 grid-cols-4">
             <template v-for="day in ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']">
                 <div class="text-center h-10 text-sm leading-5">{{ day }}</div>
             </template>
@@ -199,9 +205,10 @@ onMounted(() => {
                     <div class="bottom flex-grow xl:h-30 lg:30 md:30 h-20 py-2 w-full cursor-pointer">
                         <div class="overflow-y-hidden block space-y-1">
                             <div class="relative" v-for="(student, index) in item.listMahasiswa">
-                                <p class="text-xs font-light leading-3 px-0.5 rounded-md">{{ student.nama_mahasiswa }}</p>
+                                <p class="text-xs font-light leading-3 px-0.5 rounded-md">{{ student.nama_mahasiswa }}
+                                </p>
                                 <button class="rounded-l-xl px-4 py-1 absolute top-0 right-0"
-                                    @click="deleteSchedule(student.jadwal_id)">
+                                    :disabled="student.flag_disable === 'true'" @click="deleteSchedule(student.jadwal_id)">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="#EC7272" height="10"
                                         viewBox="0 -960 960 960" width="10">
                                         <path
@@ -249,7 +256,8 @@ onMounted(() => {
                     <span class="text-xs text-white">
                         {{ item.label }}
                     </span>
-                    <button class="absolute bg-gray-500 right-0 rounded-full -top-1 text-xs" @click="removeList(item.code)">
+                    <button class="absolute bg-gray-500 right-0 rounded-full -top-1 text-xs"
+                        @click="removeList(item.code)">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="#FFFFFF" height="12" viewBox="0 -960 960 960"
                             width="12">
                             <path

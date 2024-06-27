@@ -12,15 +12,15 @@ const fields = ref([
     "No",
     "username",
     "Email",
+    "Nama",
     "Nama role",
     "Status",
     "Dibuat",
     "Action",
 ]);
 
-const isOpenDelete = ref(false);
-
 const getItems = computed(() => store.getItems);
+const getItemsUpdated = computed(() => store.getItemsUpdated);
 const getIsOpen = computed(() => store.getIsOpen);
 const getIsLoading = computed(() => store.getLoading);
 const getIsOpenUpdate = computed(() => store.getIsOpenUpdate);
@@ -43,17 +43,42 @@ const form = reactive(
     }
 );
 
-const getUser = () => store.fetchUser(payloadUser);
+const formUpdate = reactive(
+    {
+        user_name: "",
+        user_password: "",
+        user_active: true,
+        role_id: 0,
+        mail: "",
+        full_name: "",
+        phone: ""
+    }
+);
 
-const createUser = () => {
-    store.fetchCreateUser(form);
+
+
+const getUser = async () => await store.fetchUser(payloadUser);
+
+const createUser = async () => {
+    await store.fetchCreateUser(form);
     getUser();
 }
 
-const editUserById = (userId) => {
+const editUserById = async (userId) => {
     payloadUser.flag = false;
     payloadUser.userId = userId;
-    getUser();
+    await getUser();
+    formUpdate.full_name = getItemsUpdated.value.full_name
+    formUpdate.user_name = getItemsUpdated.value.user_name
+    formUpdate.mail = getItemsUpdated.value.email
+    formUpdate.phone = getItemsUpdated.value.phone
+    formUpdate.role_id = getItemsUpdated.value.role_id
+    formUpdate.user_active = getItemsUpdated.value.is_active === "true" ? true : false
+    formUpdate.user_name = getItemsUpdated.value.user_name
+
+
+    payloadUser.flag = true;
+    payloadUser.userId = '';
 }
 
 // const modalDelete = (paramId) => {
@@ -63,8 +88,13 @@ const editUserById = (userId) => {
 
 const updateStatusUser = async (paramId) => {
     await store.fetchDeleteUser(paramId);
-    getUser();
-    // isOpenDelete.value = false;
+    await getUser();
+}
+
+
+const updateUser = async () => {
+    await store.updateUser(formUpdate)
+    await getUser()
 }
 
 
@@ -107,20 +137,13 @@ onMounted(() => {
                                     {{ item.email }}
                                 </td>
                                 <td class="py-4 leading-6">
+                                    {{ item.full_name }}
+                                </td>
+                                <td class="py-4 leading-6">
                                     {{ item.role_name }}
                                 </td>
-                                <td class="py-4 leading-6" v-if="item.is_active == false">
-                                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
-                                        <path
-                                            d="M791-55 686-160H160v-112q0-34 17.5-62.5T224-378q45-23 91.5-37t94.5-21L55-791l57-57 736 736-57 57ZM240-240h366L486-360h-6q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32Zm496-138q29 14 46 42.5t18 61.5L666-408q18 7 35.5 14t34.5 16ZM568-506l-59-59q23-9 37-29.5t14-45.5q0-33-23.5-56.5T480-720q-25 0-45.5 14T405-669l-59-59q23-34 58-53t76-19q66 0 113 47t47 113q0 41-19 76t-53 58Zm38 266H240h366ZM457-617Z" />
-                                    </svg>
-                                </td>
-                                <td class="py-4 leading-6 relative" v-else>
-                                    <svg class="absolute top-4 left-10" fill="#A2C579" xmlns="http://www.w3.org/2000/svg"
-                                        height="24" viewBox="0 -960 960 960" width="24">
-                                        <path
-                                            d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47Zm240 320H240q-33 0-56.5-23.5T160-240v-32q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v32q0 33-23.5 56.5T720-160Zm-480-80h480v-32q0-11-5.5-20T700-306q-54-27-109-40.5T480-360q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32Zm240-320q33 0 56.5-23.5T560-640q0-33-23.5-56.5T480-720q-33 0-56.5 23.5T400-640q0 33 23.5 56.5T480-560Zm0-80Zm0 400Z" />
-                                    </svg>
+                                <td class="py-4 leading-6">
+                                    {{ item.is_active === 'true' ? 'Aktif' : 'Tidak Aktif' }}
                                 </td>
                                 <td class="py-4 leading-6">
                                     {{ item.created_date }}
@@ -224,36 +247,16 @@ onMounted(() => {
             </form>
         </BaseModal>
         <BaseModal :open="getIsOpenUpdate" @close="store.updateModalUpdate(false)" :width="'w-96'">
-            <form @submit.prevent="" class="py-8">
+            <form @submit.prevent="updateUser" class="py-8">
                 <div class="flex flex-col flex-wrap md:gap-4 space-y-2 mb-6">
                     <div class="relative h-12 w-auto min-w-[200px]">
                         <div>
                             <label class="block text-xs font-light mb-2">
-                                Username
+                                Name
                             </label>
-                            <input
+                            <input v-model="formUpdate.full_name"
                                 class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md px-2"
-                                type="text" />
-                        </div>
-                    </div>
-                    <div class="relative h-12 w-auto min-w-[200px]">
-                        <div>
-                            <label class="block text-xs font-light mb-2">
-                                Kata Sandi
-                            </label>
-                            <input
-                                class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md px-2"
-                                type="password" />
-                        </div>
-                    </div>
-                    <div class="relative h-12 w-auto min-w-[200px]">
-                        <div>
-                            <label class="block text-xs font-light mb-2">
-                                Nama Lengkap
-                            </label>
-                            <input
-                                class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md px-2"
-                                type="text" />
+                                type="text">
                         </div>
                     </div>
                     <div class="relative h-12 w-auto min-w-[200px]">
@@ -261,11 +264,41 @@ onMounted(() => {
                             <label class="block text-xs font-light mb-2">
                                 No. Hp
                             </label>
-                            <input
+                            <input v-model="formUpdate.phone"
                                 class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md px-2"
-                                type="text" />
+                                type="text">
                         </div>
                     </div>
+                    <div class="relative h-12 w-auto min-w-[200px]">
+                        <div>
+                            <label class="block text-xs font-light mb-2">
+                                Username
+                            </label>
+                            <input v-model="formUpdate.user_name" disabled
+                                class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md px-2"
+                                type="text">
+                        </div>
+                    </div>
+                    <div class="relative h-12 w-auto min-w-[200px]">
+                        <div>
+                            <label class="block text-xs font-light mb-2">
+                                Email
+                            </label>
+                            <input v-model="formUpdate.mail"
+                                class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md px-2"
+                                type="text">
+                        </div>
+                    </div>
+                    <!-- <div class="relative h-12 w-auto min-w-[200px]">
+                        <div>
+                            <label class="block text-xs font-light mb-2">
+                                Password
+                            </label>
+                            <input v-model="form.user_password"
+                                class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md px-2"
+                                type="text">
+                        </div>
+                    </div> -->
                 </div>
                 <Button class="m-auto ml-auto">
                     <span>

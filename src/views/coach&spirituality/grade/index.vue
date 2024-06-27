@@ -24,9 +24,12 @@ const formUpdate = reactive(
 );
 
 const statusItems = ref([{ label: "Aktif", code: true }, { label: "Tidak Aktif", code: false }]);
-const payload = reactive({ nilaiId: "", status: "" })
+const payload = reactive({ nilaiId: "", status: "",  })
+const payloadUpdate = reactive({ nilai_id: "", is_active: '', nama_penilaian: ''})
 const nilai = ref("");
 const status = ref("");
+const namaPenilaian = ref("")
+const isOpenUpdate = ref(false)
 
 
 // computed
@@ -54,6 +57,24 @@ const updateStatus = async (params) => {
     formUpdate.is_active = params.is_active == 'true' ? 'false' : 'true';
 
     await store.fetchUpdateStatusGrade(formUpdate);
+    getGrade();
+}
+
+const updateModalEdit = () => {
+    isOpenUpdate.value = false
+}
+
+const openUpdateModal = (params) => {
+    console.log(params)
+    isOpenUpdate.value = true
+    payloadUpdate.nama_penilaian = params.nama_penilaian
+    payloadUpdate.nilai_id = params.nilai_id
+    payloadUpdate.is_active = params.is_active === 'true' ? true : false
+}
+
+const updateGradeById = async () => {
+    await store.fetchUpdateGrade(payloadUpdate)
+    isOpenUpdate.value = false
     getGrade();
 }
 
@@ -116,6 +137,13 @@ onMounted(() => {
                                     {{ item.is_active === "true" ? 'Aktif' : 'Tidak Aktif' }}
                                 </td>
                                 <td class="py-4 leading-6">
+                                    <button class="px-2" @click="openUpdateModal(item)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="#E9B824" height="24"
+                                            viewBox="0 -960 960 960" width="24">
+                                            <path
+                                                d="M200-200h56l345-345-56-56-345 345v56Zm572-403L602-771l113-113 169 169-112 112ZM120-120v-170l424-424 170 170-424 424H120Zm453-453-28-28 56 56-28-28Z" />
+                                        </svg>
+                                    </button>
                                     <button class="px-2" v-if="item.is_active == 'true'" @click="updateStatus(item)">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="#4EBF5F" height="24"
                                             viewBox="0 -960 960 960" width="24">
@@ -155,9 +183,37 @@ onMounted(() => {
                 <div class="relative h-12 w-auto min-w-[200px]">
                     <div>
                         <label class="block text-xs font-light mb-2">
-                            Nilai
+                            Nama Penilaian
                         </label>
                         <input v-model="nilai"
+                            class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md px-2"
+                            type="text">
+                    </div>
+                </div>
+            </div>
+            <Button type="submit" class="m-auto ml-auto">
+                <span>
+                    <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16"
+                        fill="#FFFFFF">
+                        <path d="M460-460H240v-40h220v-220h40v220h220v40H500v220h-40v-220Z" />
+                    </svg>
+                </span>
+                <span
+                    :class="getIsLoading ? 'h-6 w-6 block rounded-full border-4 border-t-[#4EBF5F] animate-spin' : ''">
+                    {{ getIsLoading ? '' : 'New' }}
+                </span>
+            </Button>
+        </form>
+    </BaseModal>
+    <BaseModal :open="isOpenUpdate" @close="updateModalEdit(false)" :width="'w-96'">
+        <form @submit.prevent="updateGradeById" class="py-8">
+            <div class="flex flex-col flex-wrap md:gap-4 space-y-2 mb-6">
+                <div class="relative h-12 w-auto min-w-[200px]">
+                    <div>
+                        <label class="block text-xs font-light mb-2">
+                            Nama Penilaian
+                        </label>
+                        <input v-model="payloadUpdate.nama_penilaian"
                             class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md px-2"
                             type="text">
                     </div>

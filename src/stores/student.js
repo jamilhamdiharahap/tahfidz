@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { getMahasiswa, postMahasiswa, updateStatusMahasiswa } from '../service/studentService.js';
 import { getAngkatan } from '../service/generationService.js';
+import { swallAlert } from '../plugins/sweetalert2.js';
 
 export const useStudentStore = defineStore('student', {
     state: () => ({
@@ -62,19 +63,16 @@ export const useStudentStore = defineStore('student', {
 
         async fetchUpdateStatusMahasiswa(payload) {
             this.loading = true;
-            const { status, message } = await updateStatusMahasiswa(payload);
-            if (status == 200) {
-                setTimeout(() => {
-                    this.loading = false;
-                    this.message = message;
-                    this.updateModal(false)
-                }, 1000);
+            const res = await updateStatusMahasiswa(payload);
+            if (res.response?.data?.status === 400) {
+                this.loading = false;
+                this.message = message;
+                swallAlert('danger', 'error', { btnOk: 'Ok', message: res.response.data.message, title: 'Error' })
             } else {
-                setTimeout(() => {
-                    this.loading = false;
-                    this.message = message;
-                    this.updateModal(false)
-                }, 1000);
+                this.loading = false;
+                this.message = message;
+                this.updateModal(false)
+                swallAlert('success', 'success', { btnOk: 'Ok', message: res.data.message, title: res.data.message })
             }
         },
 

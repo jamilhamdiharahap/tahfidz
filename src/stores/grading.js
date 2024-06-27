@@ -60,6 +60,10 @@ export const useGradingStore = defineStore('grading', {
             }
         },
 
+        clearGrading () {
+            this.surahOption = []
+        },
+
         updateItems(results) {
             this.items = results.data;
         },

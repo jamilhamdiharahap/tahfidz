@@ -2,25 +2,19 @@ import { defineStore } from 'pinia'
 import {
     getUser,
     postUser,
-    deleteUser
+    deleteUser,
+    putUser
 } from '../service/userService.js';
+import { swallAlert } from '../plugins/sweetalert2.js';
 
 export const useUserStore = defineStore('user', {
     state: () => ({
         items: [],
+        itemUpdate: {},
         isOpen: false,
         loading: false,
         message: "",
         isOpenUpdate: false,
-        updateUser: {
-            user_name: "",
-            user_password: "",
-            user_active: true,
-            role_id: 0,
-            mail: "",
-            full_name: "",
-            phone: ""
-        }
     }),
 
     actions: {
@@ -29,6 +23,7 @@ export const useUserStore = defineStore('user', {
             if(params.flag){
                 this.updateItems(data);
             }else{
+                this.itemsUpdated(data);
                 this.updateModalUpdate(true);
             }
         },
@@ -47,6 +42,19 @@ export const useUserStore = defineStore('user', {
                     this.message = message;
                     this.updateModal(false)
                 }, 1000);
+            }
+        },
+
+        async updateUser(payload) {
+            this.loading = true;
+            const res = await putUser(payload);
+            if (res.response?.data?.status === 400) {
+                this.loading = false;
+                swallAlert('danger', 'error', { btnOk: 'Ok', message: res.response.data.message, title: 'Error' })
+            } else {
+                this.loading = false;
+                this.updateModalUpdate(false);
+                swallAlert('success', 'success', { btnOk: 'Ok', message: res.data.message, title: res.data.message })
             }
         },
 
@@ -75,6 +83,10 @@ export const useUserStore = defineStore('user', {
             this.isOpen = status;
         },
 
+        itemsUpdated(results) {
+            this.itemUpdate = results.data[0]
+        },
+
         updateModalUpdate(status) {
             this.isOpenUpdate = status
         },
@@ -82,6 +94,7 @@ export const useUserStore = defineStore('user', {
 
     getters: {
         getItems: (state) => state.items,
+        getItemsUpdated: (state) => state.itemUpdate,
         getIsOpen: (state) => state.isOpen,
         getLoading: (state) => state.loading,
         getIsOpenUpdate: (state) => state.isOpenUpdate,
