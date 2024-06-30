@@ -27,7 +27,7 @@ const storeMhs = useGradeStore();
 const generationStore = useStudentStore();
 const generation = ref("");
 const student = ref("");
-const payloadStudent = reactive({ id: "", angkatan: "", mahasiswaId: "", nameAngkatan: "", status: "" });
+const payloadStudent = reactive({ id: "", angkatan: "", mahasiswaId: "", nameAngkatan: "", status: "true" });
 const form = reactive([])
 const fields = ref([
     "No",

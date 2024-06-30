@@ -299,9 +299,9 @@ onMounted(() => {
                     <div class="relative h-12 w-auto min-w-[200px]">
                         <div>
                             <label class="block text-xs font-light mb-2">
-                                Angkatan
+                                No. Hp
                             </label>
-                            <input v-model="updateStudent.payload.angkatan"
+                            <input v-model="updateStudent.payload.nomor_hp"
                                 class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md px-2"
                                 type="text" />
                         </div>
@@ -309,11 +309,11 @@ onMounted(() => {
                     <div class="relative h-12 w-auto min-w-[200px]">
                         <div>
                             <label class="block text-xs font-light mb-2">
-                                No. Hp
+                                Angkatan
                             </label>
-                            <input v-model="updateStudent.payload.nomor_hp"
-                                class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md px-2"
-                                type="text" />
+                            <v-select :options="getGenerationFilter" label="label"
+                                v-model="updateStudent.payload.angkatan"
+                                class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md"></v-select>
                         </div>
                     </div>
                 </div>

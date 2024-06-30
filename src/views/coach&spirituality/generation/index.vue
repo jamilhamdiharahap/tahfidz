@@ -244,6 +244,16 @@ onMounted(() => {
                             <p id="demo" class="text-xs"></p>
                         </div>
                     </div>
+                    <div class="relative h-12 w-auto min-w-[200px]">
+                        <div>
+                            <label class="block text-xs font-light mb-2">
+                                Nama Angkatan
+                            </label>
+                            <input v-model="form.nama_angkatan"
+                                class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md px-2"
+                                type="text">
+                        </div>
+                    </div>
                     <div>
                         <label class="block text-xs font-light mb-2">
                             Status
@@ -260,16 +270,6 @@ onMounted(() => {
                                     d="M280-260.001q-91.666 0-155.832-64.14-64.167-64.14-64.167-155.768 0-91.629 64.167-155.859Q188.334-699.999 280-699.999h400q91.666 0 155.832 64.14 64.167 64.14 64.167 155.768 0 91.629-64.167 155.859Q771.666-260.001 680-260.001H280ZM280-320h400q66 0 113-47t47-113q0-66-47-113t-113-47H280q-66 0-113 47t-47 113q0 66 47 113t113 47Zm-.045-50.001q45.814 0 77.929-32.07t32.115-77.884q0-45.814-32.07-77.929t-77.884-32.115q-45.814 0-77.929 32.07t-32.115 77.884q0 45.814 32.07 77.929t77.884 32.115ZM480-480Z" />
                             </svg>
                         </button>
-                    </div>
-                    <div class="relative h-12 w-auto min-w-[200px]">
-                        <div>
-                            <label class="block text-xs font-light mb-2">
-                                Nama Angkatan
-                            </label>
-                            <input v-model="form.nama_angkatan"
-                                class="text-xs border w-full min-h-[2vw] md:leading-[2vw] h-auto leading-[8vw] focus:ring-1 focus:outline-none focus:ring-[#F1C93B] rounded-md px-2"
-                                type="text">
-                        </div>
                     </div>
                 </div>
                 <Button class="m-auto ml-auto">

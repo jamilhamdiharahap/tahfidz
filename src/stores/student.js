@@ -49,7 +49,7 @@ export const useStudentStore = defineStore('student', {
         updateItemFilter(results) {
             if (Array.isArray(results.data)) {
                 this.generation_option = []
-                results.data.forEach(item => this.generation_option.push({ label: item.nama_angkatan, code: item.angkatan }));
+                results.data.forEach(item => this.generation_option.push({ label: item.angkatan, code: item.angkatan }));
             } else {
                 console.error('Invalid input');
             }
