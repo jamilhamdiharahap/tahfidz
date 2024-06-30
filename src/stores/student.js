@@ -17,7 +17,7 @@ export const useStudentStore = defineStore('student', {
             nama_mahasiswa: "",
             email: "",
             nomor_hp: "",
-            is_active: true,
+            is_active: "",
             angkatan: "",
             is_deleted: ""
         }
@@ -26,6 +26,7 @@ export const useStudentStore = defineStore('student', {
     actions: {
         async fetchStudent(params) {
             const { data } = await getMahasiswa(params);
+            console.log(params.flag)
             if (params.flag) {
                 this.updateItems(data);
                 this.updateItemStudentFilter(data);
@@ -34,6 +35,8 @@ export const useStudentStore = defineStore('student', {
                 this.payloadUpdate.email = data?.data[0].email;
                 this.payloadUpdate.nomor_hp = data?.data[0].nomor_hp;
                 this.payloadUpdate.angkatan = data?.data[0].angkatan;
+                this.payloadUpdate.is_active = data?.data[0].is_active;
+                this.payloadUpdate.is_deleted = data?.data[0].is_deleted;
                 this.updateModalUpdate(true);
             }
         },
@@ -66,12 +69,21 @@ export const useStudentStore = defineStore('student', {
             const res = await updateStatusMahasiswa(payload);
             if (res.response?.data?.status === 400) {
                 this.loading = false;
-                this.message = message;
-                swallAlert('danger', 'error', { btnOk: 'Ok', message: res.response.data.message, title: 'Error' })
             } else {
                 this.loading = false;
-                this.message = message;
                 this.updateModal(false)
+            }
+        },
+
+        async fetchUpdateMahasiswa(payload) {
+            this.loading = true;
+            const res = await updateStatusMahasiswa(payload);
+            if (res.response?.data?.status === 400) {
+                this.loading = false;
+                // swallAlert('danger', 'error', { btnOk: 'Ok', message: res.response.data.message, title: 'Error' })
+            } else {
+                this.loading = false;
+                this.updateModalUpdate(false);
                 swallAlert('success', 'success', { btnOk: 'Ok', message: res.data.message, title: res.data.message })
             }
         },
@@ -110,6 +122,7 @@ export const useStudentStore = defineStore('student', {
         updateModal(status) {
             this.isOpen = status;
         },
+
 
         updateModalUpdate(status) {
             this.isOpenUpdate = status

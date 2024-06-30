@@ -37,6 +37,7 @@ export const useAuthStore = defineStore('auth', {
         } else if (data.data.data.role_id == "2") {
           router.push("/spiritual");
         } else if (data.data.data.role_id == "3") {
+          console.log(data.data.data)
           localStorage.setItem('mahasiswa', JSON.stringify([data.data.data.mahasiswa_id, data.data.data.nama_mahasiswa, data.data.data.angkatan, data.data.data.nama_angkatan]))
           router.push("/students");
         } else {
@@ -59,7 +60,7 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async logout({ router }) {
-      localStorage.removeItem("auth");
+      localStorage.clear();
       router.push({ name: "Login" });
     }
   },

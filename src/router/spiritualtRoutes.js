@@ -4,6 +4,7 @@ import SurahView from "../views/coach&spirituality/surah/index.vue";
 import ScheduleView from "../views/coach&spirituality/schedule/index.vue";
 import GradingView from "../views/coach&spirituality/grading/index.vue";
 
+
 const routes = [
     {
         path: '',
@@ -30,7 +31,7 @@ const routes = [
         meta: { title: "Schedule" }
     },
     {
-        path: '/grading',
+        path: '/grading-kerohanian',
         name: 'GradingSpiritual',
         component: GradingView,
         meta: { title: "Grading" }

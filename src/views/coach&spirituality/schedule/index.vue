@@ -109,6 +109,8 @@ const getCellClasses = (item) => {
 
     if (item.flag === 'DISABLE') {
         classes.push('bg-gray-300 opacity-40');
+    } else if (item.flag === 'ACTIVE') {
+        classes.push('bg-[#A1DD70]');
     }
 
     return classes.join(' ');
@@ -208,8 +210,10 @@ onMounted(() => {
                                 <p class="text-xs font-light leading-3 px-0.5 rounded-md">{{ student.nama_mahasiswa }}
                                 </p>
                                 <button class="rounded-l-xl px-4 py-1 absolute top-0 right-0"
-                                    :disabled="student.flag_disable === 'true'" @click="deleteSchedule(student.jadwal_id)">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="#EC7272" height="10"
+                                    :disabled="student.flag_disable === 'true'"
+                                    @click="deleteSchedule(student.jadwal_id)">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        :fill="student.flag_disable === 'true' ? '#686D76' : '#EC7272'" height="10"
                                         viewBox="0 -960 960 960" width="10">
                                         <path
                                             d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />

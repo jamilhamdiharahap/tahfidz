@@ -102,6 +102,8 @@ const getCellClasses = (item) => {
 
     if (item.flag === 'DISABLE') {
         classes.push('bg-gray-300 opacity-40');
+    } else if (item.flag === 'ACTIVE') {
+        classes.push('bg-[#A1DD70]');
     }
 
     return classes.join(' ');

@@ -52,8 +52,8 @@ const getIsOpen = computed(() => store.getIsOpen);
 const getIsOpenUpdate = computed(() => store.getIsOpenUpdate);
 
 
-const getStudent = () => {
-    store.fetchStudent(payloadStudent)
+const getStudent = async () => {
+    await store.fetchStudent(payloadStudent)
 }
 
 const createStudent = async () => {
@@ -79,6 +79,24 @@ const handleUpdateStatus = async (params) => {
     params.is_active = params.is_active == 'true' ? false : true 
     await store.fetchUpdateStatusMahasiswa(params)
     getStudent()
+}
+
+
+
+const updateMahasiswa = async () => {
+    let data = {
+        "mahasiswa_id": payloadStudent.mahasiswaId,
+        "nama_mahasiswa": updateStudent.payload.nama_mahasiswa,
+        "email": updateStudent.payload.email,
+        "nomor_hp": updateStudent.payload.nomor_hp,
+        "is_active": updateStudent.payload.is_active,
+        "angkatan": updateStudent.payload.angkatan,
+        "is_deleted": updateStudent.payload.is_deleted
+    }
+    await store.fetchUpdateMahasiswa(data)
+    payloadStudent.flag = true
+    payloadStudent.mahasiswaId = ''
+    await getStudent()
 }
 
 function updatePayloadAndGetData(value, property) {
@@ -256,7 +274,7 @@ onMounted(() => {
             </form>
         </BaseModal>
         <BaseModal :open="getIsOpenUpdate" @close="store.updateModalUpdate(false)" :width="'w-96'">
-            <form @submit.prevent="" class="py-8">
+            <form @submit.prevent="updateMahasiswa" class="py-8">
                 <div class="flex flex-col flex-wrap md:gap-4 space-y-2 mb-6">
                     <div class="relative h-12 w-auto min-w-[200px]">
                         <div>
