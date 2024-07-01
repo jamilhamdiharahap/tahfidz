@@ -103,19 +103,14 @@ export const useStudentStore = defineStore('student', {
                 angkatan: params.angkatan.code,
                 is_deleted: true
             }
-            const { data, status, message } = await postMahasiswa(payload);
-            if (status == 200) {
-                setTimeout(() => {
-                    this.loading = false;
-                    this.message = message;
-                    this.updateModal(false)
-                }, 1000);
+            const res = await postMahasiswa(payload);
+            if (res.response?.data?.status === 400) {
+                this.loading = false;
+                swallAlert('danger', 'error', { btnOk: 'Ok', message: res.response.data.message, title: 'Error' })
             } else {
-                setTimeout(() => {
-                    this.loading = false;
-                    this.message = message;
-                    this.updateModal(false)
-                }, 1000);
+                this.loading = false;
+                this.updateModal(false)
+                swallAlert('success', 'success', { btnOk: 'Ok', message: res.data.message, title: res.data.message })
             }
         },
 
